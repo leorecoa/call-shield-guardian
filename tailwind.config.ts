@@ -1,3 +1,4 @@
+
 import type { Config } from "tailwindcss";
 
 export default {
@@ -61,6 +62,26 @@ export default {
 					'accent-foreground': 'hsl(var(--sidebar-accent-foreground))',
 					border: 'hsl(var(--sidebar-border))',
 					ring: 'hsl(var(--sidebar-ring))'
+				},
+				shield: {
+					50: '#EEF5FF',
+					100: '#D5E6FF',
+					200: '#B3D1FF',
+					300: '#80B4FF',
+					400: '#4D94FF',
+					500: '#1A73E8', /* primary blue */
+					600: '#0D5BD7',
+					700: '#0747A6',
+					800: '#043086',
+					900: '#021E4D',
+				},
+				danger: {
+					DEFAULT: '#FF3B30', /* for blocked calls */
+					light: '#FFD8D6',
+				},
+				success: {
+					DEFAULT: '#34C759', /* for allowed calls */
+					light: '#D8FFE3',
 				}
 			},
 			borderRadius: {
@@ -84,11 +105,19 @@ export default {
 					to: {
 						height: '0'
 					}
+				},
+				'pulse-shield': {
+					'0%, 100%': { opacity: '1' },
+					'50%': { opacity: '0.7' }
 				}
 			},
 			animation: {
 				'accordion-down': 'accordion-down 0.2s ease-out',
-				'accordion-up': 'accordion-up 0.2s ease-out'
+				'accordion-up': 'accordion-up 0.2s ease-out',
+				'pulse-shield': 'pulse-shield 2s ease-in-out infinite'
+			},
+			fontFamily: {
+				sans: ['Montserrat', 'sans-serif']
 			}
 		}
 	},
