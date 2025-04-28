@@ -14,7 +14,18 @@ const config: CapacitorConfig = {
       minSdkVersion: 26, // Android 8.0
       targetSdkVersion: 33,
     }
+  },
+  plugins: {
+    SplashScreen: {
+      launchShowDuration: 2000,
+      backgroundColor: "#1F516E", // shield-700 color
+      showSpinner: false,
+      androidSpinnerStyle: "large",
+      splashFullScreen: true,
+      splashImmersive: true
+    }
   }
 };
 
 export default config;
+
