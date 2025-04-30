@@ -13,7 +13,12 @@ const config: CapacitorConfig = {
     buildOptions: {
       minSdkVersion: 26, // Android 8.0
       targetSdkVersion: 33,
-    }
+    },
+    intentFilters: [
+      {
+        action: "android.intent.action.VIEW"
+      }
+    ]
   },
   plugins: {
     SplashScreen: {
@@ -23,6 +28,16 @@ const config: CapacitorConfig = {
       androidSpinnerStyle: "large",
       splashFullScreen: true,
       splashImmersive: true
+    },
+    Permissions: {
+      // Incluindo as permissões solicitadas
+      permissions: [
+        "android.permission.INTERNET",
+        "android.permission.ACCESS_NETWORK_STATE",
+        "android.permission.MODIFY_PHONE_STATE",
+        "android.permission.READ_PHONE_STATE",
+        "android.permission.POST_NOTIFICATIONS"
+      ]
     }
   }
 };
