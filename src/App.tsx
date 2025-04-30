@@ -15,7 +15,7 @@ const App = () => {
   const [showSplash, setShowSplash] = useState(true);
 
   useEffect(() => {
-    // Hide splash screen after 2 seconds
+    // Ocultar tela de splash após 2 segundos
     const timer = setTimeout(() => {
       setShowSplash(false);
     }, 2000);
@@ -44,4 +44,3 @@ const App = () => {
 };
 
 export default App;
-

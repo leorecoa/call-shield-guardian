@@ -38,13 +38,13 @@ const Index = () => {
           <Shield active={isActive} size="xl" />
           <h2 className="mt-4 text-xl font-bold text-center">
             {isActive 
-              ? "Your calls are protected" 
-              : "Call protection is disabled"}
+              ? "Suas chamadas estão protegidas" 
+              : "Proteção de chamadas está desativada"}
           </h2>
           <p className="text-sm text-muted-foreground text-center mt-1">
             {isActive
-              ? `${stats.totalBlocked} unwanted calls have been blocked`
-              : "Enable protection to block unwanted VoIP calls"}
+              ? `${stats.totalBlocked} chamadas indesejadas foram bloqueadas`
+              : "Ative a proteção para bloquear chamadas VoIP indesejadas"}
           </p>
         </div>
         
@@ -52,19 +52,19 @@ const Index = () => {
           <TabsList className="grid w-full grid-cols-4">
             <TabsTrigger value="history" className="text-xs">
               <BarChart2 className="h-4 w-4 md:mr-2" />
-              <span className="hidden md:inline">History</span>
+              <span className="hidden md:inline">Histórico</span>
             </TabsTrigger>
             <TabsTrigger value="settings" className="text-xs">
               <Settings className="h-4 w-4 md:mr-2" />
-              <span className="hidden md:inline">Settings</span>
+              <span className="hidden md:inline">Configurações</span>
             </TabsTrigger>
             <TabsTrigger value="lists" className="text-xs">
               <ListFilter className="h-4 w-4 md:mr-2" />
-              <span className="hidden md:inline">Lists</span>
+              <span className="hidden md:inline">Listas</span>
             </TabsTrigger>
             <TabsTrigger value="test" className="text-xs">
               <ShieldAlert className="h-4 w-4 md:mr-2" />
-              <span className="hidden md:inline">Test</span>
+              <span className="hidden md:inline">Teste</span>
             </TabsTrigger>
           </TabsList>
           
@@ -111,13 +111,13 @@ const Index = () => {
             <Shield active={isActive} size="xl" />
             <h2 className="mt-6 text-2xl font-bold text-center">
               {isActive 
-                ? "Your calls are protected" 
-                : "Call protection is disabled"}
+                ? "Suas chamadas estão protegidas" 
+                : "Proteção de chamadas está desativada"}
             </h2>
             <p className="text-muted-foreground text-center mt-2 mb-6">
               {isActive
-                ? `${stats.totalBlocked} unwanted calls have been blocked`
-                : "Enable protection to block unwanted VoIP calls"}
+                ? `${stats.totalBlocked} chamadas indesejadas foram bloqueadas`
+                : "Ative a proteção para bloquear chamadas VoIP indesejadas"}
             </p>
             <Button 
               onClick={toggleActive}
@@ -127,7 +127,7 @@ const Index = () => {
               }
               size="lg"
             >
-              {isActive ? "Disable Protection" : "Enable Protection"}
+              {isActive ? "Desativar Proteção" : "Ativar Proteção"}
             </Button>
           </div>
           

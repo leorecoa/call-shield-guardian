@@ -23,19 +23,19 @@ const DEFAULT_SETTINGS: BlockSettings = {
   blockSuspiciousIP: true
 };
 
-// Mock data for demonstration 
+// Dados fictícios para demonstração 
 const MOCK_BLOCKED_CALLS: BlockedCall[] = [
   {
     id: '1',
     sourceIP: '203.0.113.1',
-    timestamp: Date.now() - 1000 * 60 * 30, // 30 minutes ago
+    timestamp: Date.now() - 1000 * 60 * 30, // 30 minutos atrás
     callType: 'suspicious_ip',
     isVoIP: true
   },
   {
     id: '2',
-    phoneNumber: 'Anonymous',
-    timestamp: Date.now() - 1000 * 60 * 120, // 2 hours ago
+    phoneNumber: 'Anônimo',
+    timestamp: Date.now() - 1000 * 60 * 120, // 2 horas atrás
     callType: 'anonymous',
     isVoIP: true
   },
@@ -43,26 +43,26 @@ const MOCK_BLOCKED_CALLS: BlockedCall[] = [
     id: '3',
     phoneNumber: '+1234567890',
     sourceIP: '198.51.100.1',
-    timestamp: Date.now() - 1000 * 60 * 60 * 5, // 5 hours ago
+    timestamp: Date.now() - 1000 * 60 * 60 * 5, // 5 horas atrás
     callType: 'user_blocked',
     isVoIP: true
   },
   {
     id: '4',
     sourceIP: '192.0.2.123',
-    timestamp: Date.now() - 1000 * 60 * 60 * 24, // 1 day ago
+    timestamp: Date.now() - 1000 * 60 * 60 * 24, // 1 dia atrás
     callType: 'unknown_server',
     isVoIP: true
   },
   {
     id: '5',
-    timestamp: Date.now() - 1000 * 60 * 60 * 48, // 2 days ago
+    timestamp: Date.now() - 1000 * 60 * 60 * 48, // 2 dias atrás
     callType: 'no_valid_number',
     isVoIP: true
   }
 ];
 
-// This would connect to native Android code in a real implementation
+// Em uma implementação real, isso se conectaria ao código nativo do Android
 export function useCallBlocker() {
   const [blockedCalls, setBlockedCalls] = useState<BlockedCall[]>(MOCK_BLOCKED_CALLS);
   const [stats, setStats] = useState<StatsSummary>(INITIAL_STATS);
@@ -71,7 +71,7 @@ export function useCallBlocker() {
   const [isActive, setIsActive] = useState<boolean>(true);
   const { toast } = useToast();
   
-  // Calculate stats from blocked calls
+  // Calcular estatísticas a partir das chamadas bloqueadas
   useEffect(() => {
     const today = new Date();
     today.setHours(0, 0, 0, 0);
@@ -79,7 +79,7 @@ export function useCallBlocker() {
     
     const todayBlocked = blockedCalls.filter(call => call.timestamp >= todayTimestamp).length;
     
-    // Group by type
+    // Agrupar por tipo
     const byType = blockedCalls.reduce((acc, call) => {
       acc[call.callType as keyof typeof acc]++;
       return acc;
@@ -98,7 +98,7 @@ export function useCallBlocker() {
     });
   }, [blockedCalls]);
   
-  // Add a new blocked call
+  // Adicionar uma nova chamada bloqueada
   const addBlockedCall = (call: Omit<BlockedCall, 'id'>) => {
     const newCall = {
       ...call,
@@ -107,25 +107,25 @@ export function useCallBlocker() {
     
     setBlockedCalls(prev => [newCall, ...prev]);
     
-    // Show notification when a call is blocked
+    // Mostrar notificação quando uma chamada é bloqueada
     toast({
-      title: "Call Blocked",
-      description: `A ${call.callType.replace('_', ' ')} call was blocked`,
+      title: "Chamada Bloqueada",
+      description: `Uma chamada ${call.callType.replace('_', ' ')} foi bloqueada`,
       variant: "default"
     });
   };
   
-  // Toggle the active state of the call blocker
+  // Alternar o estado ativo do bloqueador de chamadas
   const toggleActive = () => {
     setIsActive(prev => !prev);
   };
   
-  // Update settings
+  // Atualizar configurações
   const updateSettings = (newSettings: Partial<BlockSettings>) => {
     setSettings(prev => ({ ...prev, ...newSettings }));
   };
   
-  // Add custom entry to blocklist or allowlist
+  // Adicionar entrada personalizada à lista de bloqueio ou permissão
   const addCustomEntry = (entry: Omit<CustomListEntry, 'id' | 'addedAt'>) => {
     const newEntry = {
       ...entry,
@@ -136,34 +136,34 @@ export function useCallBlocker() {
     setCustomList(prev => [newEntry, ...prev]);
   };
   
-  // Remove custom entry from list
+  // Remover entrada personalizada da lista
   const removeCustomEntry = (id: string) => {
     setCustomList(prev => prev.filter(entry => entry.id !== id));
   };
   
-  // Clear all blocked calls history
+  // Limpar todo o histórico de chamadas bloqueadas
   const clearBlockedCalls = () => {
     setBlockedCalls([]);
     toast({
-      title: "History Cleared",
-      description: "All blocked call records have been deleted",
+      title: "Histórico Limpo",
+      description: "Todos os registros de chamadas bloqueadas foram excluídos",
       variant: "default"
     });
   };
   
-  // Simulate an incoming call
+  // Simular uma chamada recebida
   const simulateIncomingCall = (type: BlockedCall['callType']) => {
-    // Create a new call based on the type
+    // Criar uma nova chamada com base no tipo
     const newCall: Omit<BlockedCall, 'id'> = {
       timestamp: Date.now(),
       callType: type,
       isVoIP: true
     };
     
-    // Add specific properties based on the call type
+    // Adicionar propriedades específicas com base no tipo de chamada
     switch(type) {
       case 'anonymous':
-        newCall.phoneNumber = 'Anonymous';
+        newCall.phoneNumber = 'Anônimo';
         break;
       case 'suspicious_ip':
         newCall.sourceIP = `192.168.${Math.floor(Math.random() * 255)}.${Math.floor(Math.random() * 255)}`;

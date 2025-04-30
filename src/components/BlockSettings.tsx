@@ -26,7 +26,7 @@ export function BlockSettings({
     <Card className={className}>
       <CardHeader>
         <CardTitle className="flex justify-between items-center">
-          Protection Settings
+          Configurações de Proteção
           <Switch 
             checked={isActive} 
             onCheckedChange={onToggleActive}
@@ -34,14 +34,14 @@ export function BlockSettings({
           />
         </CardTitle>
         <CardDescription>
-          Configure how Call Shield protects your device
+          Configure como o Call Shield protege seu dispositivo
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">
         <div className="flex items-center justify-between">
           <Label htmlFor="block-all" className="flex flex-col">
-            <span>Block All VoIP Calls</span>
-            <span className="text-xs text-muted-foreground">Block all incoming VoIP calls</span>
+            <span>Bloquear Todas as Chamadas VoIP</span>
+            <span className="text-xs text-muted-foreground">Bloqueia todas as chamadas VoIP recebidas</span>
           </Label>
           <Switch 
             id="block-all" 
@@ -56,15 +56,15 @@ export function BlockSettings({
           className="text-sm font-medium cursor-pointer flex items-center gap-1 text-shield-600"
           onClick={() => setShowAdvanced(!showAdvanced)}
         >
-          {showAdvanced ? "Hide" : "Show"} Advanced Filters
+          {showAdvanced ? "Ocultar" : "Mostrar"} Filtros Avançados
         </div>
 
         {showAdvanced && (
           <div className="space-y-4 pt-2">
             <div className="flex items-center justify-between">
               <Label htmlFor="block-anonymous" className="flex flex-col">
-                <span>Block Anonymous</span>
-                <span className="text-xs text-muted-foreground">Block calls without caller ID</span>
+                <span>Bloquear Anônimas</span>
+                <span className="text-xs text-muted-foreground">Bloquear chamadas sem identificador</span>
               </Label>
               <Switch 
                 id="block-anonymous" 
@@ -77,8 +77,8 @@ export function BlockSettings({
 
             <div className="flex items-center justify-between">
               <Label htmlFor="block-unknown" className="flex flex-col">
-                <span>Block Unknown Servers</span>
-                <span className="text-xs text-muted-foreground">Block calls from unverified VoIP servers</span>
+                <span>Bloquear Servidores Desconhecidos</span>
+                <span className="text-xs text-muted-foreground">Bloquear chamadas de servidores VoIP não verificados</span>
               </Label>
               <Switch 
                 id="block-unknown" 
@@ -91,8 +91,8 @@ export function BlockSettings({
 
             <div className="flex items-center justify-between">
               <Label htmlFor="block-invalid" className="flex flex-col">
-                <span>Block Invalid Numbers</span>
-                <span className="text-xs text-muted-foreground">Block calls without valid carrier registration</span>
+                <span>Bloquear Números Inválidos</span>
+                <span className="text-xs text-muted-foreground">Bloquear chamadas sem registro válido de operadora</span>
               </Label>
               <Switch 
                 id="block-invalid" 
@@ -105,8 +105,8 @@ export function BlockSettings({
 
             <div className="flex items-center justify-between">
               <Label htmlFor="block-suspicious" className="flex flex-col">
-                <span>Block Suspicious IPs</span>
-                <span className="text-xs text-muted-foreground">Block calls from known spam sources</span>
+                <span>Bloquear IPs Suspeitos</span>
+                <span className="text-xs text-muted-foreground">Bloquear chamadas de fontes conhecidas de spam</span>
               </Label>
               <Switch 
                 id="block-suspicious" 

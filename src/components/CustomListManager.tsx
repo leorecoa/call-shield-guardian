@@ -44,31 +44,31 @@ export function CustomListManager({ entries, onAddEntry, onRemoveEntry, classNam
   const getTypeLabel = (type: CustomListEntry["type"]) => {
     switch (type) {
       case "phone":
-        return "Phone";
+        return "Telefone";
       case "ip":
-        return "IP Address";
+        return "Endereço IP";
       case "pattern":
-        return "Pattern";
+        return "Padrão";
     }
   };
 
   return (
     <Card className={className}>
       <CardHeader className="pb-2">
-        <CardTitle className="text-lg font-semibold">Custom Lists</CardTitle>
+        <CardTitle className="text-lg font-semibold">Listas Personalizadas</CardTitle>
       </CardHeader>
       <CardContent>
         <Tabs defaultValue="blocklist" onValueChange={setActiveTab}>
           <TabsList className="grid w-full grid-cols-2 mb-4">
-            <TabsTrigger value="blocklist">Block List</TabsTrigger>
-            <TabsTrigger value="allowlist">Allow List</TabsTrigger>
+            <TabsTrigger value="blocklist">Lista de Bloqueio</TabsTrigger>
+            <TabsTrigger value="allowlist">Lista de Permissão</TabsTrigger>
           </TabsList>
           
           <div className="space-y-3 mb-4">
             <div className="grid grid-cols-4 gap-2">
               <div className="col-span-3">
                 <Input 
-                  placeholder="Enter phone, IP, or pattern" 
+                  placeholder="Digite telefone, IP ou padrão" 
                   value={value} 
                   onChange={(e) => setValue(e.target.value)}
                 />
@@ -81,15 +81,15 @@ export function CustomListManager({ entries, onAddEntry, onRemoveEntry, classNam
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="phone">Phone</SelectItem>
+                  <SelectItem value="phone">Telefone</SelectItem>
                   <SelectItem value="ip">IP</SelectItem>
-                  <SelectItem value="pattern">Pattern</SelectItem>
+                  <SelectItem value="pattern">Padrão</SelectItem>
                 </SelectContent>
               </Select>
             </div>
             
             <Input 
-              placeholder="Optional notes" 
+              placeholder="Notas opcionais" 
               value={notes} 
               onChange={(e) => setNotes(e.target.value)}
             />
@@ -99,16 +99,16 @@ export function CustomListManager({ entries, onAddEntry, onRemoveEntry, classNam
               className="w-full bg-shield-500 hover:bg-shield-600"
             >
               <PlusCircle className="mr-2 h-4 w-4" />
-              Add to {activeTab === "blocklist" ? "Block List" : "Allow List"}
+              Adicionar à {activeTab === "blocklist" ? "Lista de Bloqueio" : "Lista de Permissão"}
             </Button>
           </div>
           
           <TabsContent value="blocklist">
-            <div className="text-sm font-medium mb-2">Blocked Items ({blockedEntries.length})</div>
+            <div className="text-sm font-medium mb-2">Itens Bloqueados ({blockedEntries.length})</div>
             <ScrollArea className="h-[180px]">
               {blockedEntries.length === 0 ? (
                 <p className="text-center text-muted-foreground text-sm py-4">
-                  Your block list is empty
+                  Sua lista de bloqueio está vazia
                 </p>
               ) : (
                 <div className="space-y-2">
@@ -139,11 +139,11 @@ export function CustomListManager({ entries, onAddEntry, onRemoveEntry, classNam
           </TabsContent>
           
           <TabsContent value="allowlist">
-            <div className="text-sm font-medium mb-2">Allowed Items ({allowedEntries.length})</div>
+            <div className="text-sm font-medium mb-2">Itens Permitidos ({allowedEntries.length})</div>
             <ScrollArea className="h-[180px]">
               {allowedEntries.length === 0 ? (
                 <p className="text-center text-muted-foreground text-sm py-4">
-                  Your allow list is empty
+                  Sua lista de permissão está vazia
                 </p>
               ) : (
                 <div className="space-y-2">

@@ -16,15 +16,15 @@ export function CallHistory({ calls, onClearHistory, className }: CallHistoryPro
   const getCallTypeLabel = (type: BlockedCall["callType"]) => {
     switch (type) {
       case "anonymous":
-        return "Anonymous Call";
+        return "Chamada Anônima";
       case "unknown_server":
-        return "Unknown Server";
+        return "Servidor Desconhecido";
       case "no_valid_number":
-        return "Invalid Number";
+        return "Número Inválido";
       case "suspicious_ip":
-        return "Suspicious IP";
+        return "IP Suspeito";
       case "user_blocked":
-        return "User Blocked";
+        return "Bloqueada pelo Usuário";
       default:
         return type;
     }
@@ -33,7 +33,7 @@ export function CallHistory({ calls, onClearHistory, className }: CallHistoryPro
   return (
     <Card className={className}>
       <CardHeader className="pb-2 flex flex-row items-center justify-between">
-        <CardTitle className="text-lg font-semibold">Blocked Calls</CardTitle>
+        <CardTitle className="text-lg font-semibold">Chamadas Bloqueadas</CardTitle>
         <Button 
           variant="outline" 
           size="sm" 
@@ -41,16 +41,16 @@ export function CallHistory({ calls, onClearHistory, className }: CallHistoryPro
           className="h-8 gap-1"
         >
           <Trash2 className="h-4 w-4" />
-          Clear
+          Limpar
         </Button>
       </CardHeader>
       <CardContent>
         {calls.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-8 text-center">
             <PhoneOff className="h-12 w-12 text-muted-foreground mb-2" />
-            <p className="text-muted-foreground">No calls have been blocked yet</p>
+            <p className="text-muted-foreground">Nenhuma chamada foi bloqueada ainda</p>
             <p className="text-xs text-muted-foreground mt-1">
-              When calls are blocked, they will appear here
+              Quando chamadas forem bloqueadas, aparecerão aqui
             </p>
           </div>
         ) : (
@@ -61,10 +61,10 @@ export function CallHistory({ calls, onClearHistory, className }: CallHistoryPro
                   <div className="flex justify-between items-start">
                     <div>
                       <div className="font-medium text-sm">
-                        {call.phoneNumber || "No Number"}
+                        {call.phoneNumber || "Sem Número"}
                       </div>
                       <div className="text-xs text-muted-foreground">
-                        {call.sourceIP ? `IP: ${call.sourceIP}` : "IP not available"}
+                        {call.sourceIP ? `IP: ${call.sourceIP}` : "IP não disponível"}
                       </div>
                     </div>
                     <span className="text-xs px-2 py-1 rounded-full bg-danger-light text-danger font-medium">
@@ -72,7 +72,7 @@ export function CallHistory({ calls, onClearHistory, className }: CallHistoryPro
                     </span>
                   </div>
                   <div className="text-xs text-muted-foreground mt-2">
-                    Blocked on {format(new Date(call.timestamp), "MMM dd, yyyy 'at' h:mm a")}
+                    Bloqueada em {format(new Date(call.timestamp), "dd/MM/yyyy 'às' HH:mm")}
                   </div>
                 </div>
               ))}

@@ -13,11 +13,11 @@ export function TestControls({ onSimulateCall, className }: TestControlsProps) {
   return (
     <Card className={className}>
       <CardHeader className="pb-2">
-        <CardTitle className="text-lg font-semibold">Test Features</CardTitle>
+        <CardTitle className="text-lg font-semibold">Funções de Teste</CardTitle>
       </CardHeader>
       <CardContent>
         <p className="text-sm text-muted-foreground mb-4">
-          Simulate different types of blocked calls to see how the app works
+          Simule diferentes tipos de chamadas bloqueadas para ver como o aplicativo funciona
         </p>
         <div className="grid grid-cols-2 gap-2">
           <Button 
@@ -26,7 +26,7 @@ export function TestControls({ onSimulateCall, className }: TestControlsProps) {
             onClick={() => onSimulateCall("anonymous")}
           >
             <PhoneMissed className="mr-2 h-4 w-4" />
-            Anonymous Call
+            Chamada Anônima
           </Button>
           <Button 
             variant="outline" 
@@ -34,7 +34,7 @@ export function TestControls({ onSimulateCall, className }: TestControlsProps) {
             onClick={() => onSimulateCall("unknown_server")}
           >
             <PhoneMissed className="mr-2 h-4 w-4" />
-            Unknown Server
+            Servidor Desconhecido
           </Button>
           <Button 
             variant="outline" 
@@ -42,7 +42,7 @@ export function TestControls({ onSimulateCall, className }: TestControlsProps) {
             onClick={() => onSimulateCall("no_valid_number")}
           >
             <PhoneMissed className="mr-2 h-4 w-4" />
-            Invalid Number
+            Número Inválido
           </Button>
           <Button 
             variant="outline" 
@@ -50,7 +50,7 @@ export function TestControls({ onSimulateCall, className }: TestControlsProps) {
             onClick={() => onSimulateCall("suspicious_ip")}
           >
             <PhoneMissed className="mr-2 h-4 w-4" />
-            Suspicious IP
+            IP Suspeito
           </Button>
         </div>
       </CardContent>
