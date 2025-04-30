@@ -2,8 +2,8 @@
 import { CapacitorConfig } from '@capacitor/cli';
 
 const config: CapacitorConfig = {
-  appId: 'app.lovable.8458a5d67702467098046353f343f574',
-  appName: 'call-shield-guardian',
+  appId: 'com.bruno.callshield', // 👈 Formato correto!
+  appName: 'Call Shield Guardian',
   webDir: 'dist',
   server: {
     url: 'https://8458a5d6-7702-4670-9804-6353f343f574.lovableproject.com?forceHideBadge=true',
@@ -28,4 +28,3 @@ const config: CapacitorConfig = {
 };
 
 export default config;
-
