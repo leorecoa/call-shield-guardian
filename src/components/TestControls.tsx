@@ -2,7 +2,7 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { BlockedCall } from "@/types";
-import { PhoneMissed } from "lucide-react";
+import { Flask } from "lucide-react";
 
 interface TestControlsProps {
   onSimulateCall: (type: BlockedCall["callType"]) => void;
@@ -11,45 +11,45 @@ interface TestControlsProps {
 
 export function TestControls({ onSimulateCall, className }: TestControlsProps) {
   return (
-    <Card className={className}>
+    <Card className={`${className} bg-darkNeon-700/40 border-neonBlue/20`}>
       <CardHeader className="pb-2">
-        <CardTitle className="text-lg font-semibold">Funções de Teste</CardTitle>
+        <CardTitle className="text-lg font-semibold text-neonBlue">Funções de Teste</CardTitle>
       </CardHeader>
       <CardContent>
-        <p className="text-sm text-muted-foreground mb-4">
-          Simule diferentes tipos de chamadas bloqueadas para ver como o aplicativo funciona
+        <p className="text-sm text-neonGreen mb-4">
+          Simule diferentes tipos de chamadas bloqueadas para testar o aplicativo
         </p>
         <div className="grid grid-cols-2 gap-2">
           <Button 
             variant="outline" 
-            className="bg-shield-50 border-shield-100 text-shield-700 hover:bg-shield-100"
+            className="bg-darkNeon-600/50 border-neonBlue/30 text-neonBlue hover:bg-darkNeon-600/80 hover:border-neonBlue/50 transition-all"
             onClick={() => onSimulateCall("anonymous")}
           >
-            <PhoneMissed className="mr-2 h-4 w-4" />
+            <Flask className="mr-2 h-4 w-4" />
             Chamada Anônima
           </Button>
           <Button 
             variant="outline" 
-            className="bg-shield-50 border-shield-100 text-shield-700 hover:bg-shield-100"
+            className="bg-darkNeon-600/50 border-neonBlue/30 text-neonBlue hover:bg-darkNeon-600/80 hover:border-neonBlue/50 transition-all"
             onClick={() => onSimulateCall("unknown_server")}
           >
-            <PhoneMissed className="mr-2 h-4 w-4" />
+            <Flask className="mr-2 h-4 w-4" />
             Servidor Desconhecido
           </Button>
           <Button 
             variant="outline" 
-            className="bg-shield-50 border-shield-100 text-shield-700 hover:bg-shield-100"
+            className="bg-darkNeon-600/50 border-neonBlue/30 text-neonBlue hover:bg-darkNeon-600/80 hover:border-neonBlue/50 transition-all"
             onClick={() => onSimulateCall("no_valid_number")}
           >
-            <PhoneMissed className="mr-2 h-4 w-4" />
+            <Flask className="mr-2 h-4 w-4" />
             Número Inválido
           </Button>
           <Button 
             variant="outline" 
-            className="bg-shield-50 border-shield-100 text-shield-700 hover:bg-shield-100"
+            className="bg-darkNeon-600/50 border-neonBlue/30 text-neonBlue hover:bg-darkNeon-600/80 hover:border-neonBlue/50 transition-all"
             onClick={() => onSimulateCall("suspicious_ip")}
           >
-            <PhoneMissed className="mr-2 h-4 w-4" />
+            <Flask className="mr-2 h-4 w-4" />
             IP Suspeito
           </Button>
         </div>
