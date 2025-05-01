@@ -23,48 +23,9 @@ const DEFAULT_SETTINGS: BlockSettings = {
   blockSuspiciousIP: true
 };
 
-// Dados fictícios para demonstração 
-const MOCK_BLOCKED_CALLS: BlockedCall[] = [
-  {
-    id: '1',
-    sourceIP: '203.0.113.1',
-    timestamp: Date.now() - 1000 * 60 * 30, // 30 minutos atrás
-    callType: 'suspicious_ip',
-    isVoIP: true
-  },
-  {
-    id: '2',
-    phoneNumber: 'Anônimo',
-    timestamp: Date.now() - 1000 * 60 * 120, // 2 horas atrás
-    callType: 'anonymous',
-    isVoIP: true
-  },
-  {
-    id: '3',
-    phoneNumber: '+1234567890',
-    sourceIP: '198.51.100.1',
-    timestamp: Date.now() - 1000 * 60 * 60 * 5, // 5 horas atrás
-    callType: 'user_blocked',
-    isVoIP: true
-  },
-  {
-    id: '4',
-    sourceIP: '192.0.2.123',
-    timestamp: Date.now() - 1000 * 60 * 60 * 24, // 1 dia atrás
-    callType: 'unknown_server',
-    isVoIP: true
-  },
-  {
-    id: '5',
-    timestamp: Date.now() - 1000 * 60 * 60 * 48, // 2 dias atrás
-    callType: 'no_valid_number',
-    isVoIP: true
-  }
-];
-
 // Em uma implementação real, isso se conectaria ao código nativo do Android
 export function useCallBlocker() {
-  const [blockedCalls, setBlockedCalls] = useState<BlockedCall[]>(MOCK_BLOCKED_CALLS);
+  const [blockedCalls, setBlockedCalls] = useState<BlockedCall[]>([]);
   const [stats, setStats] = useState<StatsSummary>(INITIAL_STATS);
   const [settings, setSettings] = useState<BlockSettings>(DEFAULT_SETTINGS);
   const [customList, setCustomList] = useState<CustomListEntry[]>([]);

@@ -1,3 +1,4 @@
+
 import type { Config } from "tailwindcss";
 
 export default {
@@ -76,12 +77,22 @@ export default {
         },
         danger: {
           DEFAULT: '#FF4B4B',
-          light: '#FFE5E5',
+          light: '#3D1A1A',
         },
         success: {
           DEFAULT: '#34C759',
-          light: '#D8FFE3',
-        }
+          light: '#1A3D25',
+        },
+        darkNeon: {
+          900: '#0F0F12',
+          800: '#1A1A20',
+          700: '#23232D',
+          600: '#2C2C3A',
+        },
+        neonBlue: '#00AAFF',
+        neonPurple: '#9D4EDD',
+        neonGreen: '#39FF14',
+        neonPink: '#FF00FF',
       },
       borderRadius: {
         lg: 'var(--radius)',

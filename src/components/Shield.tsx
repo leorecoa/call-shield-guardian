@@ -34,8 +34,9 @@ export function Shield({ active = true, size = "md", className }: ShieldProps) {
         className={cn(
           "relative rounded-lg transform -rotate-45",
           sizeClasses[size],
-          active ? "bg-shield-500" : "bg-gray-300",
-          "shadow-lg transition-colors duration-200"
+          active ? "bg-neonBlue" : "bg-gray-500",
+          "shadow-lg transition-colors duration-200",
+          active && "shadow-neonBlue/20"
         )}
       >
         <div className={cn(
@@ -57,8 +58,9 @@ export function Shield({ active = true, size = "md", className }: ShieldProps) {
       {active && (
         <span 
           className={cn(
-            "absolute bg-shield-500/10 rounded-full",
-            glowSizes[size]
+            "absolute bg-neonBlue/30 rounded-full",
+            glowSizes[size],
+            "animate-pulse"
           )} 
         />
       )}
