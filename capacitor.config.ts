@@ -2,11 +2,12 @@
 import { CapacitorConfig } from '@capacitor/cli';
 
 const config: CapacitorConfig = {
-  appId: 'com.bruno.callshield', // 👈 Formato correto!
+  appId: 'com.bruno.callshield',
   appName: 'Call Shield Guardian',
   webDir: 'dist',
   server: {
-    url: 'https://8458a5d6-7702-4670-9804-6353f343f574.lovableproject.com?forceHideBadge=true',
+    androidScheme: 'https',
+    hostname: '8458a5d6-7702-4670-9804-6353f343f574.lovableproject.com',
     cleartext: true
   },
   android: {
