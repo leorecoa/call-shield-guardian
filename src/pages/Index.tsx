@@ -6,6 +6,7 @@ import { CustomListManager } from "@/components/CustomListManager";
 import { Shield } from "@/components/Shield";
 import { StatsCard } from "@/components/StatsCard";
 import { TestControls } from "@/components/TestControls";
+import { AdBanner } from "@/components/AdBanner";
 import { useCallBlocker } from "@/hooks/useCallBlocker";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -47,6 +48,9 @@ const Index = () => {
               : "Ative a proteção para bloquear chamadas VoIP indesejadas"}
           </p>
         </div>
+        
+        {/* Ad Banner at top of mobile view */}
+        <AdBanner position="top" className="mb-4" />
         
         <Tabs defaultValue="history">
           <TabsList className="grid w-full grid-cols-4">
@@ -97,6 +101,9 @@ const Index = () => {
             <TestControls onSimulateCall={simulateIncomingCall} />
           </TabsContent>
         </Tabs>
+        
+        {/* Ad Banner at bottom of mobile view */}
+        <AdBanner position="bottom" className="mt-6" />
       </div>
     );
   }
@@ -140,10 +147,16 @@ const Index = () => {
               onToggleActive={toggleActive}
             />
             <TestControls onSimulateCall={simulateIncomingCall} />
+            
+            {/* Sidebar Ad Banner */}
+            <AdBanner position="sidebar" />
           </div>
         </div>
         
         <div className="md:col-span-7 lg:col-span-8 space-y-6">
+          {/* Top Ad Banner in desktop view */}
+          <AdBanner position="top" />
+          
           <CallHistory 
             calls={blockedCalls}
             onClearHistory={clearBlockedCalls}
@@ -153,6 +166,9 @@ const Index = () => {
             onAddEntry={addCustomEntry}
             onRemoveEntry={removeCustomEntry}
           />
+          
+          {/* Bottom Ad Banner in desktop view */}
+          <AdBanner position="bottom" />
         </div>
       </div>
     </div>
