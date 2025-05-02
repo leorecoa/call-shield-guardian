@@ -6,9 +6,10 @@ const config: CapacitorConfig = {
   appName: 'Call Shield Guardian',
   webDir: 'dist',
   server: {
-    androidScheme: 'https',
+    androidScheme: 'http',
     hostname: '8458a5d6-7702-4670-9804-6353f343f574.lovableproject.com',
-    cleartext: true
+    cleartext: true,
+    allowNavigation: ['*']
   },
   android: {
     buildOptions: {

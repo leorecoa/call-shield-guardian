@@ -8,8 +8,64 @@ import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
 import { SplashScreen } from "@/components/SplashScreen";
 import { useEffect, useState } from "react";
+import { useToast } from "./hooks/use-toast";
 
-const queryClient = new QueryClient();
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      retry: 3,
+      retryDelay: attemptIndex => Math.min(1000 * 2 ** attemptIndex, 30000),
+    },
+  },
+});
+
+const NetworkCheck = () => {
+  const { toast } = useToast();
+  
+  useEffect(() => {
+    const checkNetwork = () => {
+      if (!navigator.onLine) {
+        toast({
+          title: "Sem conexão",
+          description: "Verifique sua conexão com a internet",
+          variant: "destructive",
+        });
+      } else {
+        // Verificar se o servidor está acessível
+        fetch('https://8458a5d6-7702-4670-9804-6353f343f574.lovableproject.com/ping', { 
+          method: 'HEAD',
+          mode: 'no-cors'
+        }).catch(() => {
+          console.log("Servidor pode estar indisponível, mas continuando operação local");
+        });
+      }
+    };
+
+    checkNetwork();
+    
+    window.addEventListener('online', () => {
+      toast({
+        title: "Conexão restaurada",
+        description: "Você está conectado à internet novamente",
+      });
+    });
+    
+    window.addEventListener('offline', () => {
+      toast({
+        title: "Sem conexão",
+        description: "Verifique sua conexão com a internet",
+        variant: "destructive",
+      });
+    });
+    
+    return () => {
+      window.removeEventListener('online', () => {});
+      window.removeEventListener('offline', () => {});
+    };
+  }, [toast]);
+  
+  return null;
+};
 
 const App = () => {
   const [showSplash, setShowSplash] = useState(true);
@@ -32,6 +88,7 @@ const App = () => {
       <TooltipProvider>
         <Toaster />
         <Sonner />
+        <NetworkCheck />
         <BrowserRouter>
           <Routes>
             <Route path="/" element={<Index />} />
