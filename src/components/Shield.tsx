@@ -1,6 +1,6 @@
 
 import { cn } from "@/lib/utils";
-import { ShieldOff } from "lucide-react";
+import { ShieldCheck, ShieldAlert } from "lucide-react";
 
 interface ShieldProps {
   active?: boolean;
@@ -10,17 +10,17 @@ interface ShieldProps {
 
 export function Shield({ active = true, size = "md", className }: ShieldProps) {
   const sizeClasses = {
-    sm: "h-6 w-6",
-    md: "h-9 w-9",
-    lg: "h-16 w-16",
-    xl: "h-24 w-24"
+    sm: "h-8 w-8",
+    md: "h-12 w-12",
+    lg: "h-20 w-20",
+    xl: "h-32 w-32"
   };
 
   const glowSizes = {
-    sm: "h-12 w-12",
-    md: "h-16 w-16",
-    lg: "h-24 w-24",
-    xl: "h-32 w-32"
+    sm: "h-14 w-14",
+    md: "h-20 w-20",
+    lg: "h-32 w-32",
+    xl: "h-40 w-40"
   };
 
   return (
@@ -30,40 +30,56 @@ export function Shield({ active = true, size = "md", className }: ShieldProps) {
         className
       )}
     >
-      <div
-        className={cn(
-          "relative rounded-lg transform -rotate-45",
-          sizeClasses[size],
-          active ? "bg-neonBlue" : "bg-gray-500",
-          "shadow-lg transition-colors duration-200",
-          active && "shadow-neonBlue/20"
-        )}
-      >
-        <div className={cn(
-          "absolute inset-0 flex items-center justify-center",
-          "transform rotate-45"
-        )}>
-          <ShieldOff 
+      {active && (
+        <>
+          <span 
+            className={cn(
+              "absolute bg-neonBlue/5 rounded-full",
+              glowSizes[size],
+              "animate-pulse"
+            )} 
+          />
+          <span 
+            className={cn(
+              "absolute bg-neonBlue/10 rounded-full",
+              "w-3/4 h-3/4",
+              "animate-pulse [animation-delay:300ms]"
+            )} 
+          />
+        </>
+      )}
+      <div className={cn(
+        "flex items-center justify-center rounded-xl transform",
+        sizeClasses[size],
+        active 
+          ? "bg-gradient-to-br from-neonBlue to-neonBlue/80" 
+          : "bg-gradient-to-br from-gray-600 to-gray-700",
+        "shadow-lg transition-all duration-300",
+        active && "shadow-neonBlue/20"
+      )}>
+        {active ? (
+          <ShieldCheck 
             className={cn(
               "text-white",
               size === "sm" ? "h-4 w-4" : "",
               size === "md" ? "h-6 w-6" : "",
               size === "lg" ? "h-10 w-10" : "",
               size === "xl" ? "h-16 w-16" : "",
-              active && "animate-pulse-shield"
+              "animate-pulse-shield"
             )}
           />
-        </div>
+        ) : (
+          <ShieldAlert
+            className={cn(
+              "text-white/80",
+              size === "sm" ? "h-4 w-4" : "",
+              size === "md" ? "h-6 w-6" : "",
+              size === "lg" ? "h-10 w-10" : "",
+              size === "xl" ? "h-16 w-16" : ""
+            )}
+          />
+        )}
       </div>
-      {active && (
-        <span 
-          className={cn(
-            "absolute bg-neonBlue/30 rounded-full",
-            glowSizes[size],
-            "animate-pulse"
-          )} 
-        />
-      )}
     </div>
   );
 }

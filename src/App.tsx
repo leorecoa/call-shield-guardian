@@ -69,14 +69,26 @@ const NetworkCheck = () => {
 
 const App = () => {
   const [showSplash, setShowSplash] = useState(true);
+  const [isAppReady, setIsAppReady] = useState(false);
 
   useEffect(() => {
-    // Ocultar tela de splash após 2 segundos
-    const timer = setTimeout(() => {
-      setShowSplash(false);
-    }, 2000);
-
-    return () => clearTimeout(timer);
+    // Pré-carregamento de recursos importantes
+    const preloadResources = async () => {
+      // Simula carregamento de recursos críticos
+      await new Promise(r => setTimeout(r, 800));
+      setIsAppReady(true);
+      
+      // Ocultar tela de splash com um atraso para mostrar animações
+      setTimeout(() => {
+        setShowSplash(false);
+      }, 1500);
+    };
+    
+    preloadResources();
+    
+    return () => {
+      // Limpar qualquer coisa pendente
+    };
   }, []);
 
   if (showSplash) {
@@ -90,10 +102,12 @@ const App = () => {
         <Sonner />
         <NetworkCheck />
         <BrowserRouter>
-          <Routes>
-            <Route path="/" element={<Index />} />
-            <Route path="*" element={<NotFound />} />
-          </Routes>
+          <div className={`app-container transition-opacity duration-300 ${isAppReady ? 'opacity-100' : 'opacity-0'}`}>
+            <Routes>
+              <Route path="/" element={<Index />} />
+              <Route path="*" element={<NotFound />} />
+            </Routes>
+          </div>
         </BrowserRouter>
       </TooltipProvider>
     </QueryClientProvider>
