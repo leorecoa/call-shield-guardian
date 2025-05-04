@@ -13,14 +13,17 @@ import { useToast } from "./hooks/use-toast";
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
-      retry: 3,
+      retry: 5, // Aumentando o número de tentativas
       retryDelay: attemptIndex => Math.min(1000 * 2 ** attemptIndex, 30000),
+      staleTime: 5 * 60 * 1000, // 5 minutos
+      cacheTime: 10 * 60 * 1000, // 10 minutos
     },
   },
 });
 
 const NetworkCheck = () => {
   const { toast } = useToast();
+  const [isServerAvailable, setIsServerAvailable] = useState(true);
   
   useEffect(() => {
     const checkNetwork = () => {
@@ -30,37 +33,58 @@ const NetworkCheck = () => {
           description: "Verifique sua conexão com a internet",
           variant: "destructive",
         });
+        setIsServerAvailable(false);
       } else {
-        // Verificar se o servidor está acessível
-        fetch('https://8458a5d6-7702-4670-9804-6353f343f574.lovableproject.com/ping', { 
+        // Verificar se o servidor está acessível com timeout
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 10000);
+        
+        fetch('https://lovableproject.com/ping', { 
           method: 'HEAD',
+          signal: controller.signal,
           mode: 'no-cors'
-        }).catch(() => {
-          console.log("Servidor pode estar indisponível, mas continuando operação local");
+        })
+        .then(() => {
+          setIsServerAvailable(true);
+          clearTimeout(timeoutId);
+        })
+        .catch((error) => {
+          console.log("Erro ao verificar servidor: ", error.message);
+          // Continuar mesmo com erro no servidor
+          clearTimeout(timeoutId);
         });
       }
     };
 
     checkNetwork();
     
-    window.addEventListener('online', () => {
+    // Verificar a cada 30 segundos
+    const intervalId = setInterval(checkNetwork, 30000);
+    
+    const handleOnline = () => {
       toast({
         title: "Conexão restaurada",
         description: "Você está conectado à internet novamente",
       });
-    });
+      setIsServerAvailable(true);
+    };
     
-    window.addEventListener('offline', () => {
+    const handleOffline = () => {
       toast({
         title: "Sem conexão",
         description: "Verifique sua conexão com a internet",
         variant: "destructive",
       });
-    });
+      setIsServerAvailable(false);
+    };
+    
+    window.addEventListener('online', handleOnline);
+    window.addEventListener('offline', handleOffline);
     
     return () => {
-      window.removeEventListener('online', () => {});
-      window.removeEventListener('offline', () => {});
+      clearInterval(intervalId);
+      window.removeEventListener('online', handleOnline);
+      window.removeEventListener('offline', handleOffline);
     };
   }, [toast]);
   
@@ -74,14 +98,23 @@ const App = () => {
   useEffect(() => {
     // Pré-carregamento de recursos importantes
     const preloadResources = async () => {
-      // Simula carregamento de recursos críticos
-      await new Promise(r => setTimeout(r, 800));
-      setIsAppReady(true);
-      
-      // Ocultar tela de splash com um atraso para mostrar animações
-      setTimeout(() => {
-        setShowSplash(false);
-      }, 1500);
+      try {
+        // Simula carregamento de recursos críticos
+        await new Promise(r => setTimeout(r, 800));
+        setIsAppReady(true);
+        
+        // Ocultar tela de splash com um atraso para mostrar animações
+        setTimeout(() => {
+          setShowSplash(false);
+        }, 1500);
+      } catch (error) {
+        console.error("Erro no carregamento:", error);
+        // Mesmo com erro, seguir para o app após um tempo
+        setIsAppReady(true);
+        setTimeout(() => {
+          setShowSplash(false);
+        }, 2000);
+      }
     };
     
     preloadResources();
