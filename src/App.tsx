@@ -13,8 +13,8 @@ import { useToast } from "./hooks/use-toast";
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
-      retry: 5, // Aumentando o número de tentativas
-      retryDelay: attemptIndex => Math.min(1000 * 2 ** attemptIndex, 30000),
+      retry: 3, // Reduzindo o número de tentativas
+      retryDelay: attemptIndex => Math.min(1000 * 2 ** attemptIndex, 10000), // Reduzindo o tempo máximo
       staleTime: 5 * 60 * 1000, // 5 minutos
       gcTime: 10 * 60 * 1000, // 10 minutos (substituindo cacheTime)
     },
@@ -96,24 +96,24 @@ const App = () => {
   const [isAppReady, setIsAppReady] = useState(false);
 
   useEffect(() => {
-    // Pré-carregamento de recursos importantes
+    // Otimizando carregamento inicial
     const preloadResources = async () => {
       try {
-        // Simula carregamento de recursos críticos
-        await new Promise(r => setTimeout(r, 800));
+        // Reduzindo o tempo de simulação de carregamento
+        await new Promise(r => setTimeout(r, 300));
         setIsAppReady(true);
         
-        // Ocultar tela de splash com um atraso para mostrar animações
+        // Reduzindo tempo da tela de splash
         setTimeout(() => {
           setShowSplash(false);
-        }, 1500);
+        }, 800);
       } catch (error) {
         console.error("Erro no carregamento:", error);
-        // Mesmo com erro, seguir para o app após um tempo
+        // Mesmo com erro, seguir mais rapidamente para o app
         setIsAppReady(true);
         setTimeout(() => {
           setShowSplash(false);
-        }, 2000);
+        }, 500);
       }
     };
     
@@ -135,7 +135,7 @@ const App = () => {
         <Sonner />
         <NetworkCheck />
         <BrowserRouter>
-          <div className={`app-container transition-opacity duration-300 ${isAppReady ? 'opacity-100' : 'opacity-0'}`}>
+          <div className={`app-container transition-opacity duration-200 ${isAppReady ? 'opacity-100' : 'opacity-0'}`}>
             <Routes>
               <Route path="/" element={<Index />} />
               <Route path="*" element={<NotFound />} />
