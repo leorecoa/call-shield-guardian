@@ -19,6 +19,7 @@ const Index = () => {
     settings,
     customList,
     isActive,
+    hasPermissions,
     updateSettings,
     toggleActive,
     addCustomEntry,
@@ -82,6 +83,7 @@ const Index = () => {
               onUpdateSettings={updateSettings}
               isActive={isActive}
               onToggleActive={toggleActive}
+              hasPermissions={hasPermissions}
             />
           </TabsContent>
           
@@ -138,6 +140,7 @@ const Index = () => {
               onUpdateSettings={updateSettings}
               isActive={isActive}
               onToggleActive={toggleActive}
+              hasPermissions={hasPermissions}
             />
             <TestControls onSimulateCall={simulateIncomingCall} />
           </div>

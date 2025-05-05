@@ -4,12 +4,15 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { BlockSettings as BlockSettingsType } from "@/types";
 import { useState } from "react";
+import { AlertCircle } from "lucide-react";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 
 interface BlockSettingsProps {
   settings: BlockSettingsType;
   onUpdateSettings: (settings: Partial<BlockSettingsType>) => void;
   isActive: boolean;
   onToggleActive: () => void;
+  hasPermissions?: boolean;
   className?: string;
 }
 
@@ -18,6 +21,7 @@ export function BlockSettings({
   onUpdateSettings, 
   isActive,
   onToggleActive,
+  hasPermissions = true,
   className 
 }: BlockSettingsProps) {
   const [showAdvanced, setShowAdvanced] = useState(false);
@@ -38,6 +42,15 @@ export function BlockSettings({
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">
+        {!hasPermissions && (
+          <Alert variant="destructive" className="mb-4">
+            <AlertCircle className="h-4 w-4" />
+            <AlertDescription>
+              Permissões de telefone não concedidas. O bloqueio pode não funcionar corretamente.
+            </AlertDescription>
+          </Alert>
+        )}
+
         <div className="flex items-center justify-between">
           <Label htmlFor="block-all" className="flex flex-col">
             <span>Bloquear Todas as Chamadas VoIP</span>

@@ -22,6 +22,16 @@ const config: CapacitorConfig = {
     intentFilters: [
       {
         action: "android.intent.action.VIEW"
+      },
+      {
+        action: "android.intent.action.PHONE_STATE"
+      },
+      {
+        action: "android.intent.action.NEW_OUTGOING_CALL"
+      },
+      {
+        action: "android.intent.action.BOOT_COMPLETED",
+        category: ["android.intent.category.DEFAULT"]
       }
     ]
   },
@@ -40,6 +50,12 @@ const config: CapacitorConfig = {
         "android.permission.ACCESS_NETWORK_STATE",
         "android.permission.MODIFY_PHONE_STATE",
         "android.permission.READ_PHONE_STATE",
+        "android.permission.CALL_PHONE",
+        "android.permission.PROCESS_OUTGOING_CALLS",
+        "android.permission.READ_CALL_LOG",
+        "android.permission.WRITE_CALL_LOG",
+        "android.permission.RECEIVE_BOOT_COMPLETED",
+        "android.permission.FOREGROUND_SERVICE",
         "android.permission.POST_NOTIFICATIONS"
       ]
     }
