@@ -52,23 +52,113 @@
       margin-bottom: 1rem;
       color: #1F516E;
     }
+    .debug-info {
+      font-size: 0.8rem;
+      margin-top: 2rem;
+      padding: 1rem;
+      background: #f1f5f9;
+      border-radius: 6px;
+      text-align: left;
+    }
+    .spinner {
+      border: 3px solid rgba(31, 81, 110, 0.3);
+      border-radius: 50%;
+      border-top: 3px solid #1F516E;
+      width: 20px;
+      height: 20px;
+      animation: spin 1s linear infinite;
+      display: inline-block;
+      vertical-align: middle;
+      margin-right: 8px;
+    }
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
   </style>
 </head>
 <body>
   <div class="container">
     <div class="icon">📶</div>
-    <h1>Sem conexão</h1>
-    <p>Não foi possível conectar ao servidor. Verifique sua conexão com a internet e tente novamente.</p>
-    <p>O Call Shield Guardian precisa de conexão para funcionar corretamente.</p>
-    <button class="btn" onclick="window.location.reload()">Tentar novamente</button>
+    <h1>Problema de Conexão</h1>
+    <p>Não foi possível conectar ao servidor do Call Shield Guardian.</p>
+    <p>Por favor verifique:</p>
+    <ul style="text-align: left; margin-bottom: 1.5rem;">
+      <li>Sua conexão com a internet</li>
+      <li>Se o modo avião está desativado</li>
+      <li>Se você tem sinal de rede móvel ou Wi-Fi</li>
+    </ul>
+    <button id="reloadBtn" class="btn" onclick="checkAndReload()">
+      <span id="spinner" class="spinner" style="display: none;"></span>
+      <span id="btnText">Tentar novamente</span>
+    </button>
+    
+    <div class="debug-info">
+      <p><strong>Informações de depuração:</strong></p>
+      <p id="errorDetails">Erro: net::ERR_HTTP_RESPONSE_CODE_FAILURE</p>
+      <p id="connectionStatus">Status da conexão: Verificando...</p>
+    </div>
   </div>
+  
   <script>
-    // Verificar conexão periodicamente
+    // Atualizar informações de status de conexão
+    function updateConnectionStatus() {
+      const statusEl = document.getElementById('connectionStatus');
+      statusEl.textContent = 'Status da conexão: ' + (navigator.onLine ? 'Online' : 'Offline');
+    }
+    
+    // Verificar conexão antes de recarregar
+    function checkAndReload() {
+      const spinner = document.getElementById('spinner');
+      const btnText = document.getElementById('btnText');
+      const reloadBtn = document.getElementById('reloadBtn');
+      
+      spinner.style.display = 'inline-block';
+      btnText.textContent = 'Verificando conexão...';
+      reloadBtn.disabled = true;
+      
+      // Tentar verificar conectividade
+      if (navigator.onLine) {
+        // Tentar acessar um endpoint simples
+        fetch('https://lovableproject.com/ping', { 
+          method: 'HEAD', 
+          mode: 'no-cors',
+          cache: 'no-store'
+        })
+        .then(() => {
+          window.location.reload();
+        })
+        .catch(() => {
+          spinner.style.display = 'none';
+          btnText.textContent = 'Tentar novamente';
+          reloadBtn.disabled = false;
+          alert('O servidor ainda está inacessível. Por favor tente novamente mais tarde.');
+        });
+      } else {
+        spinner.style.display = 'none';
+        btnText.textContent = 'Tentar novamente';
+        reloadBtn.disabled = false;
+        alert('Você está offline. Por favor verifique sua conexão com a internet.');
+      }
+    }
+    
+    // Verificar status da conexão
+    updateConnectionStatus();
+    window.addEventListener('online', function() {
+      updateConnectionStatus();
+      window.location.reload();
+    });
+    window.addEventListener('offline', updateConnectionStatus);
+    
+    // Verificar se está online a cada 5 segundos
     setInterval(() => {
+      updateConnectionStatus();
+      
+      // Recarregar automaticamente quando estiver online
       if (navigator.onLine) {
         window.location.reload();
       }
-    }, 10000); // Verificar a cada 10 segundos
+    }, 5000);
   </script>
 </body>
 </html>

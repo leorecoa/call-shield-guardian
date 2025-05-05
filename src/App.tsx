@@ -9,73 +9,72 @@ import NotFound from "./pages/NotFound";
 import { SplashScreen } from "@/components/SplashScreen";
 import { useEffect, useState } from "react";
 import { useToast } from "./hooks/use-toast";
+import { AlertTriangle, WifiOff } from "lucide-react";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
-      retry: 3, // Reduzindo o número de tentativas
-      retryDelay: attemptIndex => Math.min(1000 * 2 ** attemptIndex, 10000), // Reduzindo o tempo máximo
+      retry: 2, // Reduzido para minimizar espera em caso de falhas
+      retryDelay: attemptIndex => Math.min(1000 * 1.5 ** attemptIndex, 5000), // Menor tempo máximo
       staleTime: 5 * 60 * 1000, // 5 minutos
-      gcTime: 10 * 60 * 1000, // 10 minutos (substituindo cacheTime)
+      gcTime: 10 * 60 * 1000, // 10 minutos
     },
   },
 });
 
 const NetworkCheck = () => {
   const { toast } = useToast();
-  const [isServerAvailable, setIsServerAvailable] = useState(true);
+  const [isOffline, setIsOffline] = useState(!navigator.onLine);
+  const [serverUnreachable, setServerUnreachable] = useState(false);
   
   useEffect(() => {
     const checkNetwork = () => {
-      if (!navigator.onLine) {
-        toast({
-          title: "Sem conexão",
-          description: "Verifique sua conexão com a internet",
-          variant: "destructive",
-        });
-        setIsServerAvailable(false);
-      } else {
+      const online = navigator.onLine;
+      setIsOffline(!online);
+      
+      if (online) {
         // Verificar se o servidor está acessível com timeout
         const controller = new AbortController();
-        const timeoutId = setTimeout(() => controller.abort(), 10000);
+        const timeoutId = setTimeout(() => controller.abort(), 5000);
         
         fetch('https://lovableproject.com/ping', { 
           method: 'HEAD',
           signal: controller.signal,
-          mode: 'no-cors'
+          mode: 'no-cors',
+          cache: 'no-store'
         })
         .then(() => {
-          setIsServerAvailable(true);
+          setServerUnreachable(false);
           clearTimeout(timeoutId);
         })
-        .catch((error) => {
-          console.log("Erro ao verificar servidor: ", error.message);
-          // Continuar mesmo com erro no servidor
+        .catch(() => {
+          setServerUnreachable(true);
           clearTimeout(timeoutId);
         });
       }
     };
 
+    // Verificar imediatamente e depois periodicamente
     checkNetwork();
-    
-    // Verificar a cada 30 segundos
-    const intervalId = setInterval(checkNetwork, 30000);
+    const intervalId = setInterval(checkNetwork, 15000);
     
     const handleOnline = () => {
+      setIsOffline(false);
       toast({
         title: "Conexão restaurada",
         description: "Você está conectado à internet novamente",
       });
-      setIsServerAvailable(true);
+      window.location.reload(); // Recarregar para garantir o funcionamento correto
     };
     
     const handleOffline = () => {
+      setIsOffline(true);
       toast({
         title: "Sem conexão",
         description: "Verifique sua conexão com a internet",
         variant: "destructive",
       });
-      setIsServerAvailable(false);
     };
     
     window.addEventListener('online', handleOnline);
@@ -88,6 +87,25 @@ const NetworkCheck = () => {
     };
   }, [toast]);
   
+  if (isOffline || serverUnreachable) {
+    return (
+      <Alert variant="destructive" className="fixed bottom-4 left-4 right-4 z-50 animate-bounce mb-2">
+        <AlertTriangle className="h-4 w-4" />
+        <AlertTitle>Problemas de conexão</AlertTitle>
+        <AlertDescription>
+          {isOffline ? (
+            <div className="flex items-center gap-2">
+              <WifiOff className="h-4 w-4" />
+              <span>Você está offline. Verifique sua conexão.</span>
+            </div>
+          ) : (
+            <span>Não foi possível conectar ao servidor.</span>
+          )}
+        </AlertDescription>
+      </Alert>
+    );
+  }
+  
   return null;
 };
 
@@ -96,28 +114,30 @@ const App = () => {
   const [isAppReady, setIsAppReady] = useState(false);
 
   useEffect(() => {
-    // Otimizando carregamento inicial
+    // Inicializar o app mais rapidamente
     const preloadResources = async () => {
       try {
-        // Reduzindo o tempo de simulação de carregamento
-        await new Promise(r => setTimeout(r, 300));
+        // Reduzindo ainda mais o tempo de simulação
+        await new Promise(r => setTimeout(r, 100));
         setIsAppReady(true);
         
         // Reduzindo tempo da tela de splash
         setTimeout(() => {
           setShowSplash(false);
-        }, 800);
+        }, 500);
       } catch (error) {
         console.error("Erro no carregamento:", error);
-        // Mesmo com erro, seguir mais rapidamente para o app
         setIsAppReady(true);
-        setTimeout(() => {
-          setShowSplash(false);
-        }, 500);
+        setShowSplash(false);
       }
     };
     
     preloadResources();
+    
+    // Verificar se o dispositivo está online ao iniciar
+    if (!navigator.onLine) {
+      console.warn("Dispositivo offline ao iniciar o app");
+    }
     
     return () => {
       // Limpar qualquer coisa pendente

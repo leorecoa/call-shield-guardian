@@ -9,8 +9,10 @@ const config: CapacitorConfig = {
     androidScheme: 'https',
     cleartext: true,
     allowNavigation: ['*'],
-    hostname: 'lovableproject.com',
-    errorPath: '/offline-error.html'
+    hostname: 'app',
+    url: 'https://8458a5d6-7702-4670-9804-6353f343f574.lovableproject.com?forceHideBadge=true',
+    errorPath: '/offline-error.html',
+    iosScheme: 'ionic'
   },
   android: {
     buildOptions: {
@@ -25,7 +27,7 @@ const config: CapacitorConfig = {
   },
   plugins: {
     SplashScreen: {
-      launchShowDuration: 1000, // Reduzido de 2000ms para 1000ms
+      launchShowDuration: 1000,
       backgroundColor: "#1F516E", // shield-700 color
       showSpinner: false,
       androidSpinnerStyle: "large",
@@ -33,7 +35,6 @@ const config: CapacitorConfig = {
       splashImmersive: true
     },
     Permissions: {
-      // Incluindo as permissões solicitadas
       permissions: [
         "android.permission.INTERNET",
         "android.permission.ACCESS_NETWORK_STATE",
