@@ -1,3 +1,4 @@
+
 import { AppHeader } from "@/components/AppHeader";
 import { BlockSettings } from "@/components/BlockSettings";
 import { CallHistory } from "@/components/CallHistory";
@@ -5,7 +6,6 @@ import { CustomListManager } from "@/components/CustomListManager";
 import { Shield } from "@/components/Shield";
 import { StatsCard } from "@/components/StatsCard";
 import { TestControls } from "@/components/TestControls";
-import { ExportCapacitor } from "@/components/ExportCapacitor";
 import { useCallBlocker } from "@/hooks/useCallBlocker";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -47,10 +47,6 @@ const Index = () => {
               ? `${stats.totalBlocked} chamadas indesejadas foram bloqueadas`
               : "Ative a proteção para bloquear chamadas VoIP indesejadas"}
           </p>
-        </div>
-        
-        <div className="flex justify-center mb-4">
-          <ExportCapacitor />
         </div>
         
         <Tabs defaultValue="history">
@@ -110,10 +106,6 @@ const Index = () => {
   return (
     <div className="container max-w-6xl mx-auto px-4 pb-16 pt-6">
       <AppHeader isActive={isActive} onToggleActive={toggleActive} />
-      
-      <div className="flex justify-end mb-4">
-        <ExportCapacitor />
-      </div>
       
       <div className="grid md:grid-cols-12 gap-6">
         <div className="md:col-span-5 lg:col-span-4">
