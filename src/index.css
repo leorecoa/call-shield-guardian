@@ -109,6 +109,33 @@
   animation: pulse-shield 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
 }
 
+/* Nova animação de rotação lenta */
+@keyframes spin-slow {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.animate-spin-slow {
+  animation: spin-slow 12s linear infinite;
+}
+
+/* Efeitos de sombra para elementos de segurança */
+.shadow-glow {
+  box-shadow: 0 0 10px rgba(0, 170, 255, 0.3);
+}
+
+.shadow-glow-sm {
+  box-shadow: 0 0 5px rgba(0, 170, 255, 0.2);
+}
+
+.drop-shadow-glow {
+  filter: drop-shadow(0 0 10px rgba(0, 170, 255, 0.5));
+}
+
 /* Animação de destaque para elementos de segurança */
 @keyframes glow-security {
   0%, 100% {
