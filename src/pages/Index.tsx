@@ -8,9 +8,11 @@ import { StatsCard } from "@/components/StatsCard";
 import { TestControls } from "@/components/TestControls";
 import { useCallBlocker } from "@/hooks/useCallBlocker";
 import { Button } from "@/components/ui/button";
+import { Switch } from "@/components/ui/switch";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { Settings, ShieldAlert, ListFilter, BarChart2 } from "lucide-react";
+import { ConfigGuide } from "@/components/ConfigGuide";
 
 const Index = () => {
   const {
@@ -37,16 +39,23 @@ const Index = () => {
         
         <div className="flex flex-col items-center justify-center my-5">
           <Shield active={isActive} size="xl" />
-          <h2 className="mt-4 text-xl font-bold text-center">
-            {isActive 
-              ? "Chamadas protegidas" 
-              : "Proteção desativada"}
-          </h2>
-          <p className="text-sm text-muted-foreground text-center mt-1">
+          <div className="mt-6 flex items-center gap-3 justify-center">
+            <span className="text-sm text-muted-foreground">OFF</span>
+            <Switch 
+              checked={isActive}
+              onCheckedChange={toggleActive}
+              className={isActive ? "bg-neonBlue" : ""}
+            />
+            <span className="text-sm text-muted-foreground">ON</span>
+          </div>
+          <p className="text-sm text-muted-foreground text-center mt-4">
             {isActive
               ? `${stats.totalBlocked} chamadas bloqueadas`
               : "Ative para bloquear chamadas indesejadas"}
           </p>
+          <div className="mt-3">
+            <ConfigGuide />
+          </div>
         </div>
         
         <Tabs defaultValue="history">
@@ -111,26 +120,23 @@ const Index = () => {
         <div className="md:col-span-5 lg:col-span-4">
           <div className="bg-white rounded-lg shadow-sm p-6 flex flex-col items-center justify-center">
             <Shield active={isActive} size="xl" />
-            <h2 className="mt-6 text-2xl font-bold text-center">
-              {isActive 
-                ? "Chamadas protegidas" 
-                : "Proteção desativada"}
-            </h2>
-            <p className="text-muted-foreground text-center mt-2 mb-6">
+            <div className="mt-6 flex items-center gap-4 justify-center">
+              <span className="text-muted-foreground">OFF</span>
+              <Switch 
+                checked={isActive}
+                onCheckedChange={toggleActive}
+                className={isActive ? "bg-neonBlue" : ""}
+              />
+              <span className="text-muted-foreground">ON</span>
+            </div>
+            <p className="text-muted-foreground text-center mt-4">
               {isActive
                 ? `${stats.totalBlocked} chamadas indesejadas bloqueadas`
                 : "Ative para bloquear chamadas VoIP indesejadas"}
             </p>
-            <Button 
-              onClick={toggleActive}
-              className={isActive 
-                ? "bg-shield-500 hover:bg-shield-600" 
-                : "bg-muted text-muted-foreground hover:bg-muted/80"
-              }
-              size="lg"
-            >
-              {isActive ? "Desativar" : "Ativar Proteção"}
-            </Button>
+            <div className="mt-4">
+              <ConfigGuide />
+            </div>
           </div>
           
           <div className="mt-6 space-y-6">

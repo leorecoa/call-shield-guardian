@@ -34,14 +34,14 @@ export function Shield({ active = true, size = "md", className }: ShieldProps) {
         <>
           <span 
             className={cn(
-              "absolute bg-neonBlue/5 rounded-full",
+              "absolute bg-neonBlue/10 rounded-full",
               glowSizes[size],
               "animate-pulse"
             )} 
           />
           <span 
             className={cn(
-              "absolute bg-neonBlue/10 rounded-full",
+              "absolute bg-neonBlue/20 rounded-full",
               "w-3/4 h-3/4",
               "animate-pulse [animation-delay:300ms]"
             )} 
@@ -60,7 +60,7 @@ export function Shield({ active = true, size = "md", className }: ShieldProps) {
         {active ? (
           <ShieldCheck 
             className={cn(
-              "text-white",
+              "text-white opacity-80",
               size === "sm" ? "h-5 w-5" : "",
               size === "md" ? "h-8 w-8" : "",
               size === "lg" ? "h-12 w-12" : "",
@@ -71,7 +71,7 @@ export function Shield({ active = true, size = "md", className }: ShieldProps) {
         ) : (
           <ShieldAlert
             className={cn(
-              "text-white/80",
+              "text-white/70",
               size === "sm" ? "h-5 w-5" : "",
               size === "md" ? "h-8 w-8" : "",
               size === "lg" ? "h-12 w-12" : "",
@@ -80,6 +80,11 @@ export function Shield({ active = true, size = "md", className }: ShieldProps) {
           />
         )}
       </div>
+      {active && (
+        <div className="absolute -bottom-8 text-center text-sm font-medium text-neonBlue">
+          <span className="animate-pulse">Camadas Protegidas</span>
+        </div>
+      )}
     </div>
   );
 }
