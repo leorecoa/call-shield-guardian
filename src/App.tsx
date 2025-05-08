@@ -12,17 +12,19 @@ import { useToast } from "./hooks/use-toast";
 import { AlertTriangle, WifiOff } from "lucide-react";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 
+// Unified query client configuration
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
-      retry: 2, // Reduzido para minimizar espera em caso de falhas
-      retryDelay: attemptIndex => Math.min(1000 * 1.5 ** attemptIndex, 5000), // Menor tempo máximo
-      staleTime: 5 * 60 * 1000, // 5 minutos
-      gcTime: 10 * 60 * 1000, // 10 minutos
+      retry: 2,
+      retryDelay: attemptIndex => Math.min(1000 * 1.5 ** attemptIndex, 5000),
+      staleTime: 5 * 60 * 1000,
+      gcTime: 10 * 60 * 1000,
     },
   },
 });
 
+// Consolidated network checking component
 const NetworkCheck = () => {
   const { toast } = useToast();
   const [isOffline, setIsOffline] = useState(!navigator.onLine);
@@ -34,7 +36,6 @@ const NetworkCheck = () => {
       setIsOffline(!online);
       
       if (online) {
-        // Verificar se o servidor está acessível com timeout
         const controller = new AbortController();
         const timeoutId = setTimeout(() => controller.abort(), 5000);
         
@@ -55,7 +56,6 @@ const NetworkCheck = () => {
       }
     };
 
-    // Verificar imediatamente e depois periodicamente
     checkNetwork();
     const intervalId = setInterval(checkNetwork, 15000);
     
@@ -65,7 +65,6 @@ const NetworkCheck = () => {
         title: "Conexão restaurada",
         description: "Você está conectado à internet novamente",
       });
-      window.location.reload(); // Recarregar para garantir o funcionamento correto
     };
     
     const handleOffline = () => {
@@ -89,7 +88,7 @@ const NetworkCheck = () => {
   
   if (isOffline || serverUnreachable) {
     return (
-      <Alert variant="destructive" className="fixed bottom-4 left-4 right-4 z-50 animate-bounce mb-2">
+      <Alert variant="destructive" className="fixed bottom-4 left-4 right-4 z-50 mb-2">
         <AlertTriangle className="h-4 w-4" />
         <AlertTitle>Problemas de conexão</AlertTitle>
         <AlertDescription>
@@ -114,34 +113,13 @@ const App = () => {
   const [isAppReady, setIsAppReady] = useState(false);
 
   useEffect(() => {
-    // Inicializar o app mais rapidamente
-    const preloadResources = async () => {
-      try {
-        // Reduzindo ainda mais o tempo de simulação
-        await new Promise(r => setTimeout(r, 100));
-        setIsAppReady(true);
-        
-        // Reduzindo tempo da tela de splash
-        setTimeout(() => {
-          setShowSplash(false);
-        }, 500);
-      } catch (error) {
-        console.error("Erro no carregamento:", error);
-        setIsAppReady(true);
-        setShowSplash(false);
-      }
-    };
+    // Simplified app initialization
+    const timer = setTimeout(() => {
+      setIsAppReady(true);
+      setShowSplash(false);
+    }, 800);
     
-    preloadResources();
-    
-    // Verificar se o dispositivo está online ao iniciar
-    if (!navigator.onLine) {
-      console.warn("Dispositivo offline ao iniciar o app");
-    }
-    
-    return () => {
-      // Limpar qualquer coisa pendente
-    };
+    return () => clearTimeout(timer);
   }, []);
 
   if (showSplash) {

@@ -1,11 +1,10 @@
 
-import { cn } from "@/lib/utils";
 import { ShieldCheck } from "lucide-react";
 
 export function SplashScreen() {
   return (
     <div className="fixed inset-0 bg-gradient-to-br from-darkNeon-900 via-darkNeon-800 to-black flex flex-col items-center justify-center overflow-hidden">
-      {/* Background animated elements */}
+      {/* Background animated elements - simplified */}
       <div className="absolute inset-0 opacity-10">
         <div className="absolute top-1/4 left-1/4 w-32 h-32 bg-neonBlue/20 rounded-full blur-3xl animate-pulse"></div>
         <div className="absolute bottom-1/4 right-1/3 w-40 h-40 bg-neonGreen/10 rounded-full blur-3xl animate-pulse [animation-delay:1s]"></div>
@@ -14,8 +13,8 @@ export function SplashScreen() {
       
       <div className="animate-fade-in flex flex-col items-center relative z-10">
         <div className="relative mb-6">
+          {/* Simplified glow effects */}
           <div className="absolute inset-0 bg-neonBlue/20 rounded-full animate-ping"></div>
-          <div className="absolute inset-0 bg-neonBlue/30 rounded-full animate-pulse"></div>
           <div className="absolute inset-0 scale-125 bg-gradient-to-r from-neonBlue/5 to-neonGreen/5 rounded-full blur-xl animate-spin-slow"></div>
           <img 
             src="/lovable-uploads/fab841df-3f21-4b5f-99ad-6de9fc9f5586.png" 

@@ -63,6 +63,7 @@
   }
 }
 
+/* Consolidated animations */
 @keyframes fade-in {
   from {
     opacity: 0;
@@ -89,11 +90,6 @@
   }
 }
 
-.animate-fade-in {
-  animation: fade-in 0.8s cubic-bezier(0.22, 1, 0.36, 1) forwards;
-}
-
-/* Animação específica para o escudo do logo */
 @keyframes pulse-shield {
   0%, 100% { 
     opacity: 1;
@@ -105,11 +101,6 @@
   }
 }
 
-.animate-pulse-shield {
-  animation: pulse-shield 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
-}
-
-/* Nova animação de rotação lenta */
 @keyframes spin-slow {
   from {
     transform: rotate(0deg);
@@ -119,11 +110,29 @@
   }
 }
 
+@keyframes glow-security {
+  0%, 100% {
+    box-shadow: 0 0 5px rgba(57, 255, 20, 0.5);
+  }
+  50% {
+    box-shadow: 0 0 15px rgba(57, 255, 20, 0.8);
+  }
+}
+
+/* Animation utilities */
+.animate-fade-in {
+  animation: fade-in 0.8s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+.animate-pulse-shield {
+  animation: pulse-shield 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
 .animate-spin-slow {
   animation: spin-slow 12s linear infinite;
 }
 
-/* Efeitos de sombra para elementos de segurança */
+/* Shadow effects */
 .shadow-glow {
   box-shadow: 0 0 10px rgba(0, 170, 255, 0.3);
 }
@@ -134,16 +143,6 @@
 
 .drop-shadow-glow {
   filter: drop-shadow(0 0 10px rgba(0, 170, 255, 0.5));
-}
-
-/* Animação de destaque para elementos de segurança */
-@keyframes glow-security {
-  0%, 100% {
-    box-shadow: 0 0 5px rgba(57, 255, 20, 0.5);
-  }
-  50% {
-    box-shadow: 0 0 15px rgba(57, 255, 20, 0.8);
-  }
 }
 
 .security-element {
