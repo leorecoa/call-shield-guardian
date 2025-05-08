@@ -10,7 +10,7 @@ interface AppHeaderProps {
 
 export function AppHeader({ isActive, onToggleActive }: AppHeaderProps) {
   return (
-    <header className="relative overflow-hidden flex items-center justify-between p-5 bg-gradient-to-r from-darkNeon-800 to-darkNeon-700 backdrop-blur-md border border-neonBlue/20 shadow-lg rounded-lg mb-6">
+    <header className="relative overflow-hidden flex items-center justify-between p-4 sm:p-5 bg-gradient-to-r from-darkNeon-800 to-darkNeon-700 backdrop-blur-md border border-neonBlue/20 shadow-lg rounded-lg mb-4 sm:mb-6">
       {/* Background glow effect */}
       {isActive && (
         <div className="absolute inset-0 overflow-hidden">
@@ -25,33 +25,33 @@ export function AppHeader({ isActive, onToggleActive }: AppHeaderProps) {
             src="/lovable-uploads/fab841df-3f21-4b5f-99ad-6de9fc9f5586.png"
             alt="Call Shield Logo"
             className={cn(
-              "w-12 h-12 rounded-xl",
+              "w-14 h-14 sm:w-16 sm:h-16 rounded-xl",
               isActive && "animate-pulse-shield"
             )}
           />
         </div>
-        <div className="ml-4">
-          <h1 className="text-2xl font-bold text-white">
+        <div className="ml-3 sm:ml-4">
+          <h1 className="text-xl sm:text-2xl font-bold text-white">
             Call <span className="text-neonBlue">Shield</span>
           </h1>
-          <p className="text-sm text-neonGreen/90 font-medium">Proteção Avançada contra Chamadas VoIP</p>
+          <p className="text-xs sm:text-sm text-neonGreen/90 font-medium hidden sm:block">Proteção VoIP</p>
         </div>
       </div>
       
-      <div className="flex items-center gap-4 relative z-10">
+      <div className="flex items-center gap-2 sm:gap-4 relative z-10">
         <div className={cn(
-          "px-3 py-1.5 rounded-full flex items-center gap-2",
+          "px-2 py-1 sm:px-3 sm:py-1.5 rounded-full flex items-center gap-1 sm:gap-2",
           isActive 
             ? "bg-neonGreen/20 text-neonGreen border border-neonGreen/30" 
             : "bg-red-500/20 text-red-400 border border-red-500/30"
         )}>
           {isActive ? (
-            <ShieldCheck className="w-4 h-4" />
+            <ShieldCheck className="w-3 h-3 sm:w-4 sm:h-4" />
           ) : (
-            <Shield className="w-4 h-4" />
+            <Shield className="w-3 h-3 sm:w-4 sm:h-4" />
           )}
-          <span className="text-sm font-medium">
-            {isActive ? "Proteção Ativa" : "Proteção Inativa"}
+          <span className="text-xs sm:text-sm font-medium">
+            {isActive ? "Proteção Ativa" : "Inativa"}
           </span>
         </div>
         

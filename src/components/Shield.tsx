@@ -10,17 +10,17 @@ interface ShieldProps {
 
 export function Shield({ active = true, size = "md", className }: ShieldProps) {
   const sizeClasses = {
-    sm: "h-8 w-8",
-    md: "h-12 w-12",
-    lg: "h-20 w-20",
-    xl: "h-32 w-32"
+    sm: "h-10 w-10",
+    md: "h-16 w-16",
+    lg: "h-24 w-24",
+    xl: "h-36 w-36 sm:h-40 sm:w-40"
   };
 
   const glowSizes = {
-    sm: "h-14 w-14",
-    md: "h-20 w-20",
-    lg: "h-32 w-32",
-    xl: "h-40 w-40"
+    sm: "h-16 w-16",
+    md: "h-24 w-24",
+    lg: "h-36 w-36",
+    xl: "h-44 w-44 sm:h-48 sm:w-48"
   };
 
   return (
@@ -61,10 +61,10 @@ export function Shield({ active = true, size = "md", className }: ShieldProps) {
           <ShieldCheck 
             className={cn(
               "text-white",
-              size === "sm" ? "h-4 w-4" : "",
-              size === "md" ? "h-6 w-6" : "",
-              size === "lg" ? "h-10 w-10" : "",
-              size === "xl" ? "h-16 w-16" : "",
+              size === "sm" ? "h-5 w-5" : "",
+              size === "md" ? "h-8 w-8" : "",
+              size === "lg" ? "h-12 w-12" : "",
+              size === "xl" ? "h-20 w-20" : "",
               "animate-pulse-shield"
             )}
           />
@@ -72,10 +72,10 @@ export function Shield({ active = true, size = "md", className }: ShieldProps) {
           <ShieldAlert
             className={cn(
               "text-white/80",
-              size === "sm" ? "h-4 w-4" : "",
-              size === "md" ? "h-6 w-6" : "",
-              size === "lg" ? "h-10 w-10" : "",
-              size === "xl" ? "h-16 w-16" : ""
+              size === "sm" ? "h-5 w-5" : "",
+              size === "md" ? "h-8 w-8" : "",
+              size === "lg" ? "h-12 w-12" : "",
+              size === "xl" ? "h-20 w-20" : ""
             )}
           />
         )}

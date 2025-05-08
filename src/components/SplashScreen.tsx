@@ -14,19 +14,19 @@ export function SplashScreen() {
       <div className="animate-fade-in flex flex-col items-center relative z-10">
         <div className="relative mb-6">
           {/* Simplified glow effects */}
-          <div className="absolute inset-0 bg-neonBlue/20 rounded-full animate-ping"></div>
-          <div className="absolute inset-0 scale-125 bg-gradient-to-r from-neonBlue/5 to-neonGreen/5 rounded-full blur-xl animate-spin-slow"></div>
+          <div className="absolute inset-0 scale-150 bg-neonBlue/20 rounded-full animate-ping"></div>
+          <div className="absolute inset-0 scale-150 bg-gradient-to-r from-neonBlue/5 to-neonGreen/5 rounded-full blur-xl animate-spin-slow"></div>
           <img 
             src="/lovable-uploads/fab841df-3f21-4b5f-99ad-6de9fc9f5586.png" 
             alt="Call Shield Logo" 
-            className="w-32 h-32 relative z-10 animate-pulse-shield drop-shadow-glow" 
+            className="w-36 h-36 sm:w-40 sm:h-40 relative z-10 animate-pulse-shield drop-shadow-glow" 
           />
         </div>
-        <h1 className="text-3xl font-bold text-white mb-2 relative">
+        <h1 className="text-3xl sm:text-4xl font-bold text-white mb-2 relative">
           <span className="absolute inset-0 blur-sm bg-neonBlue/30 animate-pulse"></span>
           <span className="relative">Call Shield</span>
         </h1>
-        <p className="text-neonBlue font-medium tracking-wide">Proteção Avançada de Chamadas VoIP</p>
+        <p className="text-sm sm:text-base text-neonBlue font-medium tracking-wide">Proteção VoIP</p>
         
         <div className="mt-8 flex items-center gap-2 bg-darkNeon-800/50 backdrop-blur-sm px-4 py-2 rounded-full border border-neonBlue/20 shadow-glow">
           <ShieldCheck className="w-5 h-5 text-neonGreen animate-pulse" />

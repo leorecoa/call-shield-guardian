@@ -32,20 +32,20 @@ const Index = () => {
   
   if (isMobile) {
     return (
-      <div className="container max-w-md mx-auto px-4 pb-16 pt-6">
+      <div className="container max-w-md mx-auto px-4 pb-16 pt-4">
         <AppHeader isActive={isActive} onToggleActive={toggleActive} />
         
-        <div className="flex flex-col items-center justify-center my-6">
+        <div className="flex flex-col items-center justify-center my-5">
           <Shield active={isActive} size="xl" />
           <h2 className="mt-4 text-xl font-bold text-center">
             {isActive 
-              ? "Suas chamadas estão protegidas" 
-              : "Proteção de chamadas está desativada"}
+              ? "Chamadas protegidas" 
+              : "Proteção desativada"}
           </h2>
           <p className="text-sm text-muted-foreground text-center mt-1">
             {isActive
-              ? `${stats.totalBlocked} chamadas indesejadas foram bloqueadas`
-              : "Ative a proteção para bloquear chamadas VoIP indesejadas"}
+              ? `${stats.totalBlocked} chamadas bloqueadas`
+              : "Ative para bloquear chamadas indesejadas"}
           </p>
         </div>
         
@@ -57,7 +57,7 @@ const Index = () => {
             </TabsTrigger>
             <TabsTrigger value="settings" className="text-xs">
               <Settings className="h-4 w-4 md:mr-2" />
-              <span className="hidden md:inline">Configurações</span>
+              <span className="hidden md:inline">Config.</span>
             </TabsTrigger>
             <TabsTrigger value="lists" className="text-xs">
               <ListFilter className="h-4 w-4 md:mr-2" />
@@ -69,7 +69,7 @@ const Index = () => {
             </TabsTrigger>
           </TabsList>
           
-          <TabsContent value="history" className="space-y-4 mt-4">
+          <TabsContent value="history" className="space-y-4 mt-3">
             <StatsCard stats={stats} />
             <CallHistory 
               calls={blockedCalls}
@@ -77,7 +77,7 @@ const Index = () => {
             />
           </TabsContent>
           
-          <TabsContent value="settings" className="space-y-4 mt-4">
+          <TabsContent value="settings" className="space-y-4 mt-3">
             <BlockSettings
               settings={settings}
               onUpdateSettings={updateSettings}
@@ -87,7 +87,7 @@ const Index = () => {
             />
           </TabsContent>
           
-          <TabsContent value="lists" className="space-y-4 mt-4">
+          <TabsContent value="lists" className="space-y-4 mt-3">
             <CustomListManager
               entries={customList}
               onAddEntry={addCustomEntry}
@@ -95,7 +95,7 @@ const Index = () => {
             />
           </TabsContent>
           
-          <TabsContent value="test" className="space-y-4 mt-4">
+          <TabsContent value="test" className="space-y-4 mt-3">
             <TestControls onSimulateCall={simulateIncomingCall} />
           </TabsContent>
         </Tabs>
@@ -113,13 +113,13 @@ const Index = () => {
             <Shield active={isActive} size="xl" />
             <h2 className="mt-6 text-2xl font-bold text-center">
               {isActive 
-                ? "Suas chamadas estão protegidas" 
-                : "Proteção de chamadas está desativada"}
+                ? "Chamadas protegidas" 
+                : "Proteção desativada"}
             </h2>
             <p className="text-muted-foreground text-center mt-2 mb-6">
               {isActive
-                ? `${stats.totalBlocked} chamadas indesejadas foram bloqueadas`
-                : "Ative a proteção para bloquear chamadas VoIP indesejadas"}
+                ? `${stats.totalBlocked} chamadas indesejadas bloqueadas`
+                : "Ative para bloquear chamadas VoIP indesejadas"}
             </p>
             <Button 
               onClick={toggleActive}
@@ -129,7 +129,7 @@ const Index = () => {
               }
               size="lg"
             >
-              {isActive ? "Desativar Proteção" : "Ativar Proteção"}
+              {isActive ? "Desativar" : "Ativar Proteção"}
             </Button>
           </div>
           
