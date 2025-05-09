@@ -4,29 +4,43 @@ import { ShieldCheck } from "lucide-react";
 export function SplashScreen() {
   return (
     <div className="fixed inset-0 bg-gradient-to-br from-darkNeon-900 via-darkNeon-800 to-black flex flex-col items-center justify-center overflow-hidden">
-      {/* Background animated elements - simplified */}
+      {/* Enhanced background animated elements */}
       <div className="absolute inset-0 opacity-10">
         <div className="absolute top-1/4 left-1/4 w-32 h-32 bg-neonBlue/20 rounded-full blur-3xl animate-pulse"></div>
         <div className="absolute bottom-1/4 right-1/3 w-40 h-40 bg-neonGreen/10 rounded-full blur-3xl animate-pulse [animation-delay:1s]"></div>
         <div className="absolute top-2/3 left-1/2 w-24 h-24 bg-neonBlue/15 rounded-full blur-3xl animate-pulse [animation-delay:2s]"></div>
+        <div className="absolute top-1/3 right-1/4 w-36 h-36 bg-neonBlue/10 rounded-full blur-3xl animate-spin-slow"></div>
+        <div className="absolute bottom-1/3 left-1/5 w-28 h-28 bg-neonGreen/10 rounded-full blur-3xl animate-pulse [animation-delay:1.5s]"></div>
       </div>
       
       <div className="animate-fade-in flex flex-col items-center relative z-10">
         <div className="relative mb-6">
-          {/* Simplified glow effects */}
-          <div className="absolute inset-0 scale-150 bg-neonBlue/20 rounded-full animate-ping"></div>
-          <div className="absolute inset-0 scale-150 bg-gradient-to-r from-neonBlue/5 to-neonGreen/5 rounded-full blur-xl animate-spin-slow"></div>
+          {/* Enhanced glow effects for the feature graphic */}
+          <div className="absolute inset-0 scale-[2] bg-neonBlue/20 rounded-full animate-ping"></div>
+          <div className="absolute inset-0 scale-[1.8] bg-gradient-to-r from-neonBlue/10 to-neonGreen/10 rounded-full blur-xl animate-spin-slow"></div>
+          <div className="absolute inset-0 scale-[1.5] bg-neonBlue/5 rounded-full blur-md animate-pulse [animation-delay:700ms]"></div>
+          <div className="absolute inset-0 scale-[1.3] border-2 border-neonBlue/20 rounded-full animate-spin-slow [animation-duration:12s]"></div>
+          
           <img 
             src="/lovable-uploads/fab841df-3f21-4b5f-99ad-6de9fc9f5586.png" 
             alt="Call Shield Logo" 
-            className="w-36 h-36 sm:w-40 sm:h-40 relative z-10 animate-pulse-shield drop-shadow-glow" 
+            className="w-36 h-36 sm:w-44 sm:h-44 relative z-10 animate-pulse-shield drop-shadow-glow" 
           />
+          
+          {/* Additional decorative elements around the logo */}
+          <div className="absolute inset-0 z-20">
+            <span className="absolute -top-5 -left-5 w-5 h-5 bg-neonBlue rounded-full blur-sm animate-pulse"></span>
+            <span className="absolute -bottom-3 -right-3 w-4 h-4 bg-neonGreen rounded-full blur-sm animate-pulse [animation-delay:500ms]"></span>
+            <span className="absolute top-1/2 -right-6 w-3 h-3 bg-neonBlue rounded-full blur-sm animate-pulse [animation-delay:1200ms]"></span>
+            <span className="absolute bottom-1/4 -left-4 w-2 h-2 bg-neonBlue rounded-full blur-sm animate-pulse [animation-delay:800ms]"></span>
+          </div>
         </div>
-        <h1 className="text-3xl sm:text-4xl font-bold text-white mb-2 relative">
+        
+        <h1 className="text-3xl sm:text-5xl font-bold text-white mb-2 relative">
           <span className="absolute inset-0 blur-sm bg-neonBlue/30 animate-pulse"></span>
           <span className="relative">Call Shield</span>
         </h1>
-        <p className="text-sm sm:text-base text-neonBlue font-medium tracking-wide">Proteção VoIP</p>
+        <p className="text-sm sm:text-lg text-neonBlue font-medium tracking-wide">Proteção VoIP</p>
         
         <div className="mt-8 flex items-center gap-2 bg-darkNeon-800/50 backdrop-blur-sm px-4 py-2 rounded-full border border-neonBlue/20 shadow-glow">
           <ShieldCheck className="w-5 h-5 text-neonGreen animate-pulse" />
