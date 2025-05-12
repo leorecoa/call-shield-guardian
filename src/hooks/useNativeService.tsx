@@ -34,7 +34,7 @@ export function useNativeService(
           await nativeBridge.stopCallBlockingService();
         }
       } catch (error) {
-        console.error("Erro ao atualizar serviço nativo:", error);
+        console.error("Error updating native service:", error);
       }
     };
     

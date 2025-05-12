@@ -4,7 +4,7 @@ import { Toaster as Sonner, toast } from "sonner"
 type ToasterProps = React.ComponentProps<typeof Sonner>
 
 const Toaster = ({ ...props }: ToasterProps) => {
-  // Remove dependency on next-themes which might cause build issues
+  // Fixed theme implementation without dependency on next-themes
   const theme = "light" // Default theme
 
   return (

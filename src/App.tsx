@@ -62,16 +62,16 @@ const NetworkCheck = () => {
     const handleOnline = () => {
       setIsOffline(false);
       toast({
-        title: "Conexão restaurada",
-        description: "Você está conectado à internet novamente",
+        title: "Connection restored",
+        description: "You are connected to the internet again",
       });
     };
     
     const handleOffline = () => {
       setIsOffline(true);
       toast({
-        title: "Sem conexão",
-        description: "Verifique sua conexão com a internet",
+        title: "No connection",
+        description: "Check your internet connection",
         variant: "destructive",
       });
     };
@@ -90,15 +90,15 @@ const NetworkCheck = () => {
     return (
       <Alert variant="destructive" className="fixed bottom-4 left-4 right-4 z-50 mb-2">
         <AlertTriangle className="h-4 w-4" />
-        <AlertTitle>Problemas de conexão</AlertTitle>
+        <AlertTitle>Connection issues</AlertTitle>
         <AlertDescription>
           {isOffline ? (
             <div className="flex items-center gap-2">
               <WifiOff className="h-4 w-4" />
-              <span>Você está offline. Verifique sua conexão.</span>
+              <span>You are offline. Check your connection.</span>
             </div>
           ) : (
-            <span>Não foi possível conectar ao servidor.</span>
+            <span>Could not connect to the server.</span>
           )}
         </AlertDescription>
       </Alert>
