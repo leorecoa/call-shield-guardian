@@ -10,19 +10,19 @@ export function useNativeService(
   hasPermissions: boolean,
   nativeBridge: NativeBridge
 ) {
-  // Atualizar o serviço nativo quando as configurações mudarem
+  // Update native service when settings change
   useEffect(() => {
     if (!isAndroid() || !nativeBridge) return;
     
     const updateNativeService = async () => {
       try {
-        // Iniciar ou parar o serviço baseado no status de ativação
+        // Start or stop service based on activation status
         if (isActive && hasPermissions) {
           if (nativeBridge.startCallBlockingService) {
             await nativeBridge.startCallBlockingService();
           }
           
-          // Atualizar regras de bloqueio
+          // Update blocking rules
           if (nativeBridge.updateBlockingRules) {
             const rules = JSON.stringify({
               settings,

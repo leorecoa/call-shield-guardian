@@ -11,9 +11,10 @@ export default defineConfig(({ mode }) => ({
     port: 8080,
   },
   build: {
-    // Configuração para compatibilidade com Maven
+    // Maven compatibility configuration
     outDir: 'target/dist',
     emptyOutDir: true,
+    sourcemap: mode === 'development',
     rollupOptions: {
       output: {
         manualChunks: {
@@ -25,6 +26,7 @@ export default defineConfig(({ mode }) => ({
   },
   plugins: [
     react(),
+    // Component tagger only in development mode
     mode === 'development' && componentTagger(),
   ].filter(Boolean),
   resolve: {

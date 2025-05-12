@@ -9,10 +9,10 @@ try {
   if (rootElement) {
     createRoot(rootElement).render(<App />);
   } else {
-    console.error("Elemento root não encontrado");
+    console.error("Root element not found");
   }
 } catch (error) {
-  console.error('Erro crítico ao inicializar aplicativo:', error);
+  console.error('Critical error initializing app:', error);
   
   // Simple error recovery attempt
   setTimeout(() => {
@@ -22,12 +22,12 @@ try {
         createRoot(rootElement).render(<App />);
       }
     } catch (err) {
-      console.error('Falha na segunda tentativa de inicialização:', err);
+      console.error('Failed second initialization attempt:', err);
       document.body.innerHTML = `
         <div style="padding: 20px; text-align: center">
-          <h2>Erro ao inicializar o aplicativo</h2>
-          <p>Por favor, verifique sua conexão e tente novamente.</p>
-          <button onclick="window.location.reload()">Tentar novamente</button>
+          <h2>Error initializing application</h2>
+          <p>Please check your connection and try again.</p>
+          <button onclick="window.location.reload()">Try Again</button>
         </div>
       `;
     }
