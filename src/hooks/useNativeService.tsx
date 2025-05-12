@@ -12,29 +12,29 @@ export function useNativeService(
 ) {
   // Atualizar o serviço nativo quando as configurações mudarem
   useEffect(() => {
+    if (!isAndroid() || !nativeBridge) return;
+    
     const updateNativeService = async () => {
-      if (isAndroid() && nativeBridge) {
-        try {
-          // Iniciar ou parar o serviço baseado no status de ativação
-          if (isActive && hasPermissions) {
-            if (nativeBridge.startCallBlockingService) {
-              await nativeBridge.startCallBlockingService();
-            }
-            
-            // Atualizar regras de bloqueio
-            if (nativeBridge.updateBlockingRules) {
-              const rules = JSON.stringify({
-                settings,
-                customList: customList.filter(entry => entry.isBlocked)
-              });
-              await nativeBridge.updateBlockingRules(rules);
-            }
-          } else if (!isActive && nativeBridge.stopCallBlockingService) {
-            await nativeBridge.stopCallBlockingService();
+      try {
+        // Iniciar ou parar o serviço baseado no status de ativação
+        if (isActive && hasPermissions) {
+          if (nativeBridge.startCallBlockingService) {
+            await nativeBridge.startCallBlockingService();
           }
-        } catch (error) {
-          console.error("Erro ao atualizar serviço nativo:", error);
+          
+          // Atualizar regras de bloqueio
+          if (nativeBridge.updateBlockingRules) {
+            const rules = JSON.stringify({
+              settings,
+              customList: customList.filter(entry => entry.isBlocked)
+            });
+            await nativeBridge.updateBlockingRules(rules);
+          }
+        } else if (!isActive && nativeBridge.stopCallBlockingService) {
+          await nativeBridge.stopCallBlockingService();
         }
+      } catch (error) {
+        console.error("Erro ao atualizar serviço nativo:", error);
       }
     };
     

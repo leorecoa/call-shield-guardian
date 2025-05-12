@@ -1,8 +1,10 @@
+
 import * as React from "react"
 import * as DialogPrimitive from "@radix-ui/react-dialog"
 import { X } from "lucide-react"
 
 import { cn } from "@/lib/utils"
+import { buttonVariants } from "@/components/ui/button"
 
 const Dialog = DialogPrimitive.Root
 
@@ -19,7 +21,7 @@ const DialogOverlay = React.forwardRef<
   <DialogPrimitive.Overlay
     ref={ref}
     className={cn(
-      "fixed inset-0 z-50 bg-black/80  data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0",
+      "fixed inset-0 z-50 bg-black/80 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0",
       className
     )}
     {...props}
@@ -106,6 +108,35 @@ const DialogDescription = React.forwardRef<
 ))
 DialogDescription.displayName = DialogPrimitive.Description.displayName
 
+// Adicionando equivalentes do AlertDialog para facilitar a migração
+const AlertDialogAction = React.forwardRef<
+  React.ElementRef<typeof DialogPrimitive.Close>,
+  React.ComponentPropsWithoutRef<typeof DialogPrimitive.Close>
+>(({ className, ...props }, ref) => (
+  <DialogPrimitive.Close
+    ref={ref}
+    className={cn(buttonVariants(), className)}
+    {...props}
+  />
+))
+AlertDialogAction.displayName = "AlertDialogAction"
+
+const AlertDialogCancel = React.forwardRef<
+  React.ElementRef<typeof DialogPrimitive.Close>,
+  React.ComponentPropsWithoutRef<typeof DialogPrimitive.Close>
+>(({ className, ...props }, ref) => (
+  <DialogPrimitive.Close
+    ref={ref}
+    className={cn(
+      buttonVariants({ variant: "outline" }),
+      "mt-2 sm:mt-0",
+      className
+    )}
+    {...props}
+  />
+))
+AlertDialogCancel.displayName = "AlertDialogCancel"
+
 export {
   Dialog,
   DialogPortal,
@@ -117,4 +148,16 @@ export {
   DialogFooter,
   DialogTitle,
   DialogDescription,
+  // Export aliases para AlertDialog para fácil migração
+  Dialog as AlertDialog,
+  DialogPortal as AlertDialogPortal,
+  DialogOverlay as AlertDialogOverlay,
+  DialogTrigger as AlertDialogTrigger,
+  DialogContent as AlertDialogContent,
+  DialogHeader as AlertDialogHeader,
+  DialogFooter as AlertDialogFooter,
+  DialogTitle as AlertDialogTitle,
+  DialogDescription as AlertDialogDescription,
+  AlertDialogAction,
+  AlertDialogCancel
 }
