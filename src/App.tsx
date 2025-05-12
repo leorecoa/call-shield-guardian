@@ -7,7 +7,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
 import { SplashScreen } from "@/components/SplashScreen";
-import { useEffect, useState } from "react";
+import { useEffect, useState, memo } from "react";
 import { useToast } from "./hooks/use-toast";
 import { AlertTriangle, WifiOff } from "lucide-react";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
@@ -24,8 +24,8 @@ const queryClient = new QueryClient({
   },
 });
 
-// Consolidated network checking component
-const NetworkCheck = () => {
+// Memorized network checking component to prevent unnecessary re-renders
+const NetworkCheck = memo(() => {
   const { toast } = useToast();
   const [isOffline, setIsOffline] = useState(!navigator.onLine);
   const [serverUnreachable, setServerUnreachable] = useState(false);
@@ -106,7 +106,9 @@ const NetworkCheck = () => {
   }
   
   return null;
-};
+});
+
+NetworkCheck.displayName = 'NetworkCheck';
 
 const App = () => {
   const [showSplash, setShowSplash] = useState(true);

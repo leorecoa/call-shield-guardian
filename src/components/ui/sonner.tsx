@@ -3,7 +3,6 @@ import { Toaster as Sonner } from "sonner";
 import type { ToasterProps } from "sonner";
 
 const Toaster = ({ ...props }: ToasterProps) => {
-  // Use a simple light theme implementation without next-themes dependency
   return (
     <Sonner
       theme="light"
