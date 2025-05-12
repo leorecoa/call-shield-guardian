@@ -38,12 +38,10 @@ export function useNativeService(
       }
     };
     
-    // Wrap in try/catch to prevent unhandled promise rejections in production
-    try {
-      updateNativeService();
-    } catch (error) {
+    // Don't use a promise without handling potential errors
+    updateNativeService().catch(error => {
       console.error("Failed to update native service:", error);
-    }
+    });
   }, [isActive, settings, customList, hasPermissions, nativeBridge]);
 
   return null;

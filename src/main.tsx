@@ -3,7 +3,7 @@ import { createRoot } from 'react-dom/client'
 import App from './App.tsx'
 import './index.css'
 
-// Improved initialization with focused error handling
+// Improved initialization with better error handling
 try {
   const rootElement = document.getElementById("root");
   if (rootElement) {
@@ -22,15 +22,11 @@ try {
 } catch (error) {
   console.error('Critical error initializing app:', error);
   
-  // Simple error recovery attempt with better fallback
-  setTimeout(() => {
+  // Simple error recovery attempt with immediate fallback
+  const rootElement = document.getElementById("root");
+  if (rootElement) {
     try {
-      const rootElement = document.getElementById("root");
-      if (rootElement) {
-        createRoot(rootElement).render(<App />);
-      } else {
-        throw new Error("Root element not found");
-      }
+      createRoot(rootElement).render(<App />);
     } catch (err) {
       console.error('Failed second initialization attempt:', err);
       document.body.innerHTML = `
@@ -44,5 +40,5 @@ try {
         </div>
       `;
     }
-  }, 1000);
+  }
 }
