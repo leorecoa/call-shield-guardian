@@ -1,0 +1,5 @@
+<root>
+    <item name='android.provider.Settings ACTION_MANAGE_DEFAULT_APPS_SETTINGS'>
+        <annotation name='java.lang.Deprecated' />
+    </item>
+</root>

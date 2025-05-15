@@ -1,0 +1,40 @@
+{
+  "android": {
+    "buildOptions": {
+      "minSdkVersion": 26,
+      "targetSdkVersion": 33
+    },
+    "intentFilters": [
+      {
+        "action": "android.intent.action.VIEW"
+      }
+    ]
+  },
+  "appId": "com.bruno.callshield",
+  "appName": "Call Shield Guardian",
+  "plugins": {
+    "SplashScreen": {
+      "launchShowDuration": 2000,
+      "backgroundColor": "#1F51E6",
+      "showSpinner": false,
+      "androidSpinnerStyle": "large",
+      "splashFullScreen": true,
+      "splashImmersive": true
+    },
+    "Permissions": {
+      "permissions": [
+        "android.permission.INTERNET",
+        "android.permission.ACCESS_NETWORK_STATE",
+        "android.permission.READ_PHONE_STATE",
+        "android.permission.RECEIVE_SMS",
+        "android.permission.SEND_SMS",
+        "android.permission.READ_SMS",
+        "android.permission.CALL_PHONE",
+        "android.permission.READ_CALL_LOG"
+      ]
+    }
+  },
+  "server": {
+  },
+  "webDir": "dist"
+}

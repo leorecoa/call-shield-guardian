@@ -1,0 +1,86 @@
+// Arquivo build.gradle (nível de projeto) — configurações comuns a todos os módulos
+
+buildscript {
+    ext {
+        // Atualize para a versão estável mais recente do Kotlin
+        kotlin_version = '1.9.20' // Versão compatível com AGP 8.10
+        agp_version = '8.1.2' // Android Gradle Plugin version
+    }
+
+    repositories {
+        google()
+        mavenCentral()
+        gradlePluginPortal()
+    }
+
+    dependencies {
+        // Plugin do Android Gradle (usando a variável definida acima)
+        classpath "com.android.tools.build:gradle:$agp_version"
+
+        // Google Services (Firebase) - atualizado para versão mais recente
+        classpath 'com.google.gms:google-services:4.4.1'
+
+        // Plugin Kotlin
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+
+        // Adicione outros plugins essenciais aqui
+        // classpath 'com.google.firebase:firebase-crashlytics-gradle:2.9.9'
+    }
+}
+
+// Importa variáveis compartilhadas, se houver
+if (file("variables.gradle").exists()) {
+    apply from: "variables.gradle"
+} else {
+    logger.warn("Arquivo variables.gradle não encontrado")
+}
+
+allprojects {
+    repositories {
+        google()
+        mavenCentral()
+
+        // Adicione apenas repositórios necessários
+        maven { url 'https://jitpack.io' } // Descomente se usar JitPack
+
+        // Evite repositórios customizados a menos que absolutamente necessário
+        // maven { url 'https://custom.repo.com' }
+
+        // Configuração para evitar conflitos
+        configurations.all {
+            resolutionStrategy {
+                // Force a versão específica se necessário
+                // force 'com.android.support:appcompat-v7:28.0.0'
+
+                // Fail early em conflitos de versão
+                failOnVersionConflict()
+
+                // Cache dinâmico por 10 minutos
+                cacheChangingModulesFor 10, 'minutes'
+            }
+        }
+    }
+
+    // Configuração comum para todos os projetos
+    afterEvaluate { project ->
+        if (project.hasProperty("android")) {
+            android {
+                compileOptions {
+                    sourceCompatibility JavaVersion.VERSION_17
+                    targetCompatibility JavaVersion.VERSION_17
+                }
+                kotlinOptions {
+                    jvmTarget = '17'
+                }
+            }
+        }
+    }
+}
+
+// Tarefa padrão de limpeza com tratamento de erro
+tasks.register("clean", Delete) {
+    delete rootProject.layout.buildDirectory
+    doLast {
+        logger.lifecycle("Build directory cleaned successfully")
+    }
+}
