@@ -4,5 +4,4 @@ import com.getcapacitor.annotation.CapacitorPlugin;
 
 @CapacitorPlugin(name = "CallSettings")
 public class CallSettingsPlugin extends Plugin {
-
 }

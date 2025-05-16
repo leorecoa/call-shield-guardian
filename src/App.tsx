@@ -1,18 +1,18 @@
-
+import { useEffect, useState } from "react";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { TooltipProvider } from "@/components/ui/tooltip";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
-import { TooltipProvider } from "@/components/ui/tooltip";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
-import Index from "./pages/Index";
-import NotFound from "./pages/NotFound";
-import { SplashScreen } from "@/components/SplashScreen";
-import { useEffect, useState, memo } from "react";
 import { useToast } from "./hooks/use-toast";
 import { AlertTriangle, WifiOff } from "lucide-react";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 
-// Unified query client configuration
+import Index from "./pages/Index";
+import NotFound from "./pages/NotFound";
+import { SplashScreen } from "@/components/SplashScreen";
+
+// 🔧 Configuração do React Query
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
@@ -24,49 +24,52 @@ const queryClient = new QueryClient({
   },
 });
 
-// Memorized network checking component to prevent unnecessary re-renders
-const NetworkCheck = memo(() => {
+// 🌐 Componente de verificação de rede
+const NetworkCheck = () => {
   const { toast } = useToast();
   const [isOffline, setIsOffline] = useState(!navigator.onLine);
   const [serverUnreachable, setServerUnreachable] = useState(false);
-  
+
   useEffect(() => {
     const checkNetwork = () => {
       const online = navigator.onLine;
       setIsOffline(!online);
-      
+
       if (online) {
         const controller = new AbortController();
         const timeoutId = setTimeout(() => controller.abort(), 5000);
-        
-        fetch('https://lovableproject.com/ping', { 
-          method: 'HEAD',
+
+        fetch("https://lovableproject.com/ping", {
+          method: "HEAD",
           signal: controller.signal,
-          mode: 'no-cors',
-          cache: 'no-store'
+          mode: "no-cors",
+          cache: "no-store",
         })
-        .then(() => {
-          setServerUnreachable(false);
-          clearTimeout(timeoutId);
-        })
-        .catch(() => {
-          setServerUnreachable(true);
-          clearTimeout(timeoutId);
-        });
+          .then(() => {
+            setServerUnreachable(false);
+            clearTimeout(timeoutId);
+          })
+          .catch(() => {
+            setServerUnreachable(true);
+            clearTimeout(timeoutId);
+            toast({
+              title: "Erro de conexão com o servidor",
+              description: "Estamos online, mas não conseguimos acessar o servidor.",
+              variant: "destructive",
+            });
+          });
       }
     };
 
-    checkNetwork();
-    const intervalId = setInterval(checkNetwork, 15000);
-    
     const handleOnline = () => {
       setIsOffline(false);
+      checkNetwork();
       toast({
         title: "Connection restored",
         description: "You are connected to the internet again",
       });
     };
-    
+
     const handleOffline = () => {
       setIsOffline(true);
       toast({
@@ -75,17 +78,20 @@ const NetworkCheck = memo(() => {
         variant: "destructive",
       });
     };
-    
-    window.addEventListener('online', handleOnline);
-    window.addEventListener('offline', handleOffline);
-    
+
+    checkNetwork();
+    const intervalId = setInterval(checkNetwork, 15000);
+
+    window.addEventListener("online", handleOnline);
+    window.addEventListener("offline", handleOffline);
+
     return () => {
       clearInterval(intervalId);
-      window.removeEventListener('online', handleOnline);
-      window.removeEventListener('offline', handleOffline);
+      window.removeEventListener("online", handleOnline);
+      window.removeEventListener("offline", handleOffline);
     };
   }, [toast]);
-  
+
   if (isOffline || serverUnreachable) {
     return (
       <Alert variant="destructive" className="fixed bottom-4 left-4 right-4 z-50 mb-2">
@@ -104,23 +110,21 @@ const NetworkCheck = memo(() => {
       </Alert>
     );
   }
-  
+
   return null;
-});
+};
 
-NetworkCheck.displayName = 'NetworkCheck';
-
+// 🚀 App principal
 const App = () => {
   const [showSplash, setShowSplash] = useState(true);
   const [isAppReady, setIsAppReady] = useState(false);
 
   useEffect(() => {
-    // Simplified app initialization
     const timer = setTimeout(() => {
       setIsAppReady(true);
       setShowSplash(false);
     }, 800);
-    
+
     return () => clearTimeout(timer);
   }, []);
 
@@ -135,7 +139,11 @@ const App = () => {
         <Sonner />
         <NetworkCheck />
         <BrowserRouter>
-          <div className={`app-container transition-opacity duration-200 ${isAppReady ? 'opacity-100' : 'opacity-0'}`}>
+          <div
+            className={`app-container transition-opacity duration-200 ${
+              isAppReady ? "opacity-100" : "opacity-0"
+            }`}
+          >
             <Routes>
               <Route path="/" element={<Index />} />
               <Route path="*" element={<NotFound />} />
