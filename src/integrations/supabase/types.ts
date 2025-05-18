@@ -9,7 +9,122 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
-      [_ in never]: never
+      blocked_calls: {
+        Row: {
+          id: string
+          user_id: string
+          source_ip: string | null
+          phone_number: string | null
+          timestamp: number
+          call_type: string
+          is_voip: boolean
+          created_at: string
+        }
+        Insert: {
+          id: string
+          user_id: string
+          source_ip?: string | null
+          phone_number?: string | null
+          timestamp: number
+          call_type: string
+          is_voip: boolean
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          user_id?: string
+          source_ip?: string | null
+          phone_number?: string | null
+          timestamp?: number
+          call_type?: string
+          is_voip?: boolean
+          created_at?: string
+        }
+      }
+      block_settings: {
+        Row: {
+          id: string
+          user_id: string
+          block_all: boolean
+          block_anonymous: boolean
+          block_unknown_servers: boolean
+          block_no_valid_number: boolean
+          block_suspicious_ip: boolean
+          updated_at: string
+        }
+        Insert: {
+          id: string
+          user_id: string
+          block_all: boolean
+          block_anonymous: boolean
+          block_unknown_servers: boolean
+          block_no_valid_number: boolean
+          block_suspicious_ip: boolean
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          user_id?: string
+          block_all?: boolean
+          block_anonymous?: boolean
+          block_unknown_servers?: boolean
+          block_no_valid_number?: boolean
+          block_suspicious_ip?: boolean
+          updated_at?: string
+        }
+      }
+      custom_list: {
+        Row: {
+          id: string
+          user_id: string
+          value: string
+          type: string
+          is_blocked: boolean
+          added_at: number
+          notes: string | null
+          created_at: string
+        }
+        Insert: {
+          id: string
+          user_id: string
+          value: string
+          type: string
+          is_blocked: boolean
+          added_at: number
+          notes?: string | null
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          user_id?: string
+          value?: string
+          type?: string
+          is_blocked?: boolean
+          added_at?: number
+          notes?: string | null
+          created_at?: string
+        }
+      }
+      user_profiles: {
+        Row: {
+          id: string
+          email: string | null
+          last_sync: string | null
+          created_at: string
+        }
+        Insert: {
+          id: string
+          email?: string | null
+          last_sync?: string | null
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          email?: string | null
+          last_sync?: string | null
+          created_at?: string
+        }
+      }
     }
     Views: {
       [_ in never]: never

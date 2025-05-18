@@ -1,6 +1,13 @@
-import { useEffect, useRef } from 'react';
+import { useEffect } from 'react';
 import { BlockSettings, CustomListEntry } from '@/types';
-import { NativeBridge, isAndroid } from './useBridgeNative';
+import { Platform } from '@/lib/utils';
+
+interface NativeBridge {
+  enableCallBlocking?: (enable: boolean) => Promise<void>;
+  updateBlockSettings?: (settings: BlockSettings) => Promise<void>;
+  updateCustomList?: (list: CustomListEntry[]) => Promise<void>;
+  requestNotificationPermission?: () => Promise<{ granted: boolean }>;
+}
 
 export function useNativeService(
   isActive: boolean,
@@ -9,43 +16,35 @@ export function useNativeService(
   hasPermissions: boolean,
   nativeBridge: NativeBridge
 ) {
-  const prevSettingsRef = useRef<string>("");
-  
+  // Efeito para ativar/desativar o serviço de bloqueio de chamadas
   useEffect(() => {
-    if (!isAndroid() || !nativeBridge) return;
-    
-    // Serialize current settings to compare with previous
-    const currentSettings = JSON.stringify({
-      isActive,
-      settings,
-      customList: customList.filter(entry => entry.isBlocked)
-    });
-    
-    // Skip if nothing changed
-    if (currentSettings === prevSettingsRef.current) return;
-    prevSettingsRef.current = currentSettings;
-    
-    // Update native service
-    const updateNativeService = async () => {
-      try {
-        if (isActive && hasPermissions) {
-          // Start service and update rules
-          if (nativeBridge.startCallBlockingService) {
-            await nativeBridge.startCallBlockingService();
-          }
-          
-          if (nativeBridge.updateBlockingRules) {
-            const rules = JSON.stringify({ settings, customList: customList.filter(entry => entry.isBlocked) });
-            await nativeBridge.updateBlockingRules(rules);
-          }
-        } else if (!isActive && nativeBridge.stopCallBlockingService) {
-          await nativeBridge.stopCallBlockingService();
-        }
-      } catch (error) {
-        console.error("Error updating native service:", error);
-      }
-    };
-    
-    updateNativeService();
-  }, [isActive, settings, customList, hasPermissions, nativeBridge]);
+    if (Platform.isNative && nativeBridge.enableCallBlocking && hasPermissions) {
+      nativeBridge.enableCallBlocking(isActive)
+        .catch(err => console.error('Erro ao ativar/desativar bloqueio:', err));
+    }
+  }, [isActive, hasPermissions, nativeBridge]);
+
+  // Efeito para atualizar as configurações de bloqueio
+  useEffect(() => {
+    if (Platform.isNative && nativeBridge.updateBlockSettings && isActive) {
+      nativeBridge.updateBlockSettings(settings)
+        .catch(err => console.error('Erro ao atualizar configurações:', err));
+    }
+  }, [settings, isActive, nativeBridge]);
+
+  // Efeito para atualizar a lista personalizada
+  useEffect(() => {
+    if (Platform.isNative && nativeBridge.updateCustomList && isActive) {
+      nativeBridge.updateCustomList(customList)
+        .catch(err => console.error('Erro ao atualizar lista personalizada:', err));
+    }
+  }, [customList, isActive, nativeBridge]);
+
+  // Efeito para solicitar permissão de notificação quando o app é iniciado
+  useEffect(() => {
+    if (Platform.isNative && nativeBridge.requestNotificationPermission) {
+      nativeBridge.requestNotificationPermission()
+        .catch(err => console.error('Erro ao solicitar permissão de notificação:', err));
+    }
+  }, [nativeBridge]);
 }
