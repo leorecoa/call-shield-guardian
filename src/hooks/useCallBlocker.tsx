@@ -4,7 +4,8 @@ import { useLocalStorage } from './useLocalStorage';
 import { useCallStats } from './useCallStats';
 import { useBridgeNative } from './useBridgeNative';
 import { useNativeService } from './useNativeService';
-import { useCallback, useMemo, useState } from 'react';
+import { useOfflineMode } from './useOfflineMode';
+import { useCallback, useMemo, useState, useEffect } from 'react';
 import { CallManager } from '@/lib/callUtils';
 import { CallBlockingEngine } from '@/lib/callBlockingEngine';
 import { CallAnalyzer } from '@/lib/callAnalyzer';
@@ -28,6 +29,15 @@ export function useCallBlocker() {
     requestPermissions
   } = useBridgeNative();
   
+  const {
+    isOfflineMode,
+    syncPending,
+    addBlockedCallOffline,
+    updateSettingsOffline,
+    updateCustomListOffline,
+    getOfflineData
+  } = useOfflineMode();
+  
   const stats = useCallStats(blockedCalls);
   const [securityLevel, setSecurityLevel] = useState<'low' | 'medium' | 'high'>('medium');
   
@@ -35,6 +45,28 @@ export function useCallBlocker() {
   useNativeService(isActive, settings, customList, hasPermissions, nativeBridge);
   
   const { toast } = useToast();
+  
+  // Carregar dados offline quando necessário
+  useEffect(() => {
+    if (isOfflineMode) {
+      const offlineData = getOfflineData();
+      
+      // Usar configurações offline se disponíveis
+      if (offlineData.settings) {
+        setSettings(offlineData.settings);
+      }
+      
+      // Usar lista personalizada offline se disponível
+      if (offlineData.customList && offlineData.customList.length > 0) {
+        setCustomList(offlineData.customList);
+      }
+      
+      // Usar chamadas bloqueadas offline se disponíveis
+      if (offlineData.blockedCalls && offlineData.blockedCalls.length > 0) {
+        setBlockedCalls(offlineData.blockedCalls);
+      }
+    }
+  }, [isOfflineMode, getOfflineData, setSettings, setCustomList, setBlockedCalls]);
   
   // Adicionar uma nova chamada bloqueada
   const addBlockedCall = useCallback((call: Omit<BlockedCall, 'id'>) => {
@@ -46,6 +78,9 @@ export function useCallBlocker() {
     // Usar CallManager para adicionar chamada de forma otimizada
     setBlockedCalls(prev => CallManager.addCall(prev, newCall));
     
+    // Salvar no armazenamento offline também
+    addBlockedCallOffline(newCall);
+    
     toast({
       title: "Chamada Bloqueada",
       description: `Uma chamada ${call.callType.replace('_', ' ')} foi bloqueada`,
@@ -54,7 +89,7 @@ export function useCallBlocker() {
     
     // Analisar padrões após adicionar nova chamada
     analyzeCallPatterns([newCall, ...blockedCalls]);
-  }, [blockedCalls, setBlockedCalls, toast]);
+  }, [blockedCalls, setBlockedCalls, toast, addBlockedCallOffline]);
   
   // Analisar padrões de chamadas para detectar possíveis ataques
   const analyzeCallPatterns = useCallback((calls: BlockedCall[]) => {
@@ -141,8 +176,12 @@ export function useCallBlocker() {
   
   // Atualizar configurações
   const updateSettings = useCallback((newSettings: Partial<BlockSettings>) => {
-    setSettings(prev => ({ ...prev, ...newSettings }));
-  }, [setSettings]);
+    const updatedSettings = { ...settings, ...newSettings };
+    setSettings(updatedSettings);
+    
+    // Salvar no armazenamento offline também
+    updateSettingsOffline(updatedSettings);
+  }, [setSettings, settings, updateSettingsOffline]);
   
   // Adicionar entrada personalizada à lista de bloqueio ou permissão
   const addCustomEntry = useCallback((entry: Omit<CustomListEntry, 'id' | 'addedAt'>) => {
@@ -152,19 +191,27 @@ export function useCallBlocker() {
       addedAt: Date.now()
     };
     
-    setCustomList(prev => [newEntry, ...prev]);
+    const updatedList = [newEntry, ...customList];
+    setCustomList(updatedList);
+    
+    // Salvar no armazenamento offline também
+    updateCustomListOffline(updatedList);
     
     toast({
       title: entry.isBlocked ? "Número Bloqueado" : "Número Permitido",
       description: `${entry.value} foi adicionado à ${entry.isBlocked ? 'lista de bloqueio' : 'lista de permissão'}.`,
       variant: "default"
     });
-  }, [setCustomList, toast]);
+  }, [setCustomList, customList, toast, updateCustomListOffline]);
   
   // Remover entrada personalizada da lista
   const removeCustomEntry = useCallback((id: string) => {
-    setCustomList(prev => prev.filter(entry => entry.id !== id));
-  }, [setCustomList]);
+    const updatedList = customList.filter(entry => entry.id !== id);
+    setCustomList(updatedList);
+    
+    // Salvar no armazenamento offline também
+    updateCustomListOffline(updatedList);
+  }, [setCustomList, customList, updateCustomListOffline]);
   
   // Limpar todo o histórico de chamadas bloqueadas
   const clearBlockedCalls = useCallback(() => {
@@ -265,7 +312,11 @@ export function useCallBlocker() {
       !entry.id.startsWith('emerg-')
     );
     
-    setCustomList([...existingCustomRules, ...rulesToApply]);
+    const updatedList = [...existingCustomRules, ...rulesToApply];
+    setCustomList(updatedList);
+    
+    // Salvar no armazenamento offline também
+    updateCustomListOffline(updatedList);
     
     // Ajustar configurações com base no nível
     const newSettings: BlockSettings = {
@@ -279,6 +330,9 @@ export function useCallBlocker() {
     
     setSettings(newSettings);
     
+    // Salvar no armazenamento offline também
+    updateSettingsOffline(newSettings);
+    
     toast({
       title: "Nível de Segurança Atualizado",
       description: `Nível de segurança definido como ${
@@ -286,7 +340,7 @@ export function useCallBlocker() {
       }`,
       variant: "default"
     });
-  }, [customList, settings, setCustomList, setSettings, toast]);
+  }, [customList, settings, setCustomList, setSettings, toast, updateCustomListOffline, updateSettingsOffline]);
 
   // Memoize o objeto de retorno para evitar recriações desnecessárias
   return useMemo(() => ({
@@ -297,6 +351,8 @@ export function useCallBlocker() {
     isActive,
     hasPermissions,
     securityLevel,
+    isOfflineMode,
+    syncPending,
     addBlockedCall,
     toggleActive,
     updateSettings,
@@ -315,6 +371,8 @@ export function useCallBlocker() {
     isActive,
     hasPermissions,
     securityLevel,
+    isOfflineMode,
+    syncPending,
     addBlockedCall,
     toggleActive,
     updateSettings,

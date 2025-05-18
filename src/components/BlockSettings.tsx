@@ -1,135 +1,135 @@
-import { BlockSettings as BlockSettingsType } from "@/types";
-import { Card, CardContent, CardHeader, CardTitle, Switch, Label } from "@/components/ui";
-import { SectionImage } from "./SectionImage";
-import { memo, useCallback } from "react";
+import { useState } from 'react';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Switch } from "@/components/ui/switch";
+import { Label } from "@/components/ui/label";
+import { useCallBlocker } from '@/hooks/useCallBlocker';
+import { useBridgeNative } from '@/hooks/useBridgeNative';
+import { Button } from './ui/button';
+import { BellRing, BellOff } from 'lucide-react';
 
-interface BlockSettingsProps {
-  settings: BlockSettingsType;
-  onUpdateSettings: (settings: Partial<BlockSettingsType>) => void;
-  className?: string;
-}
+export function BlockSettings() {
+  const { settings, updateSettings } = useCallBlocker();
+  const { requestNotificationPermission, hasNotificationPermission } = useBridgeNative();
+  const [notificationRequested, setNotificationRequested] = useState(false);
 
-// Componente de configuração individual memoizado
-const SettingItem = memo(({ 
-  id,
-  label, 
-  description,
-  checked, 
-  onChange 
-}: { 
-  id: string;
-  label: string; 
-  description: string;
-  checked: boolean; 
-  onChange: (checked: boolean) => void;
-}) => {
-  const handleChange = useCallback((checked: boolean) => {
-    onChange(checked);
-  }, [onChange]);
+  const handleNotificationPermission = async () => {
+    const result = await requestNotificationPermission();
+    setNotificationRequested(true);
+  };
 
   return (
-    <div className="flex items-start space-x-3 py-3">
-      <Switch 
-        id={id}
-        checked={checked} 
-        onCheckedChange={handleChange}
-        className="mt-1"
-      />
-      <div className="space-y-1">
-        <Label 
-          htmlFor={id}
-          className="text-sm font-medium"
-        >
-          {label}
-        </Label>
-        <p className="text-xs text-muted-foreground">
-          {description}
-        </p>
-      </div>
-    </div>
-  );
-});
-
-SettingItem.displayName = "SettingItem";
-
-function BlockSettingsComponent({ 
-  settings, 
-  onUpdateSettings, 
-  className 
-}: BlockSettingsProps) {
-  // Handlers memoizados para cada configuração
-  const handleBlockAllChange = useCallback((checked: boolean) => {
-    onUpdateSettings({ blockAll: checked });
-  }, [onUpdateSettings]);
-
-  const handleBlockAnonymousChange = useCallback((checked: boolean) => {
-    onUpdateSettings({ blockAnonymous: checked });
-  }, [onUpdateSettings]);
-
-  const handleBlockUnknownServersChange = useCallback((checked: boolean) => {
-    onUpdateSettings({ blockUnknownServers: checked });
-  }, [onUpdateSettings]);
-
-  const handleBlockNoValidNumberChange = useCallback((checked: boolean) => {
-    onUpdateSettings({ blockNoValidNumber: checked });
-  }, [onUpdateSettings]);
-
-  const handleBlockSuspiciousIPChange = useCallback((checked: boolean) => {
-    onUpdateSettings({ blockSuspiciousIP: checked });
-  }, [onUpdateSettings]);
-
-  return (
-    <Card className={className}>
-      <CardHeader className="pb-2 flex flex-row items-center space-x-2">
-        <SectionImage section="settings" size="sm" />
-        <CardTitle className="text-lg font-semibold text-neonGreen">Configurações de Bloqueio</CardTitle>
+    <Card className="w-full">
+      <CardHeader>
+        <CardTitle>Configurações de Bloqueio</CardTitle>
+        <CardDescription>Configure como o CallShield deve filtrar suas chamadas</CardDescription>
       </CardHeader>
-      <CardContent>
-        <div className="space-y-1">
-          <SettingItem
-            id="block-all"
-            label="Bloquear Todas as Chamadas"
-            description="Bloqueia todas as chamadas recebidas, independente da origem"
-            checked={settings.blockAll}
-            onChange={handleBlockAllChange}
-          />
-          
-          <SettingItem
-            id="block-anonymous"
-            label="Bloquear Chamadas Anônimas"
-            description="Bloqueia chamadas sem identificação de número"
+      <CardContent className="space-y-4">
+        <div className="flex items-center justify-between">
+          <div className="space-y-0.5">
+            <Label htmlFor="blockAnonymous">Bloquear chamadas anônimas</Label>
+            <p className="text-sm text-muted-foreground">
+              Bloquear chamadas sem identificação de número
+            </p>
+          </div>
+          <Switch
+            id="blockAnonymous"
             checked={settings.blockAnonymous}
-            onChange={handleBlockAnonymousChange}
+            onCheckedChange={(checked) => updateSettings({ blockAnonymous: checked })}
           />
-          
-          <SettingItem
-            id="block-unknown-servers"
-            label="Bloquear Servidores Desconhecidos"
-            description="Bloqueia chamadas de servidores VoIP não reconhecidos"
-            checked={settings.blockUnknownServers}
-            onChange={handleBlockUnknownServersChange}
-          />
-          
-          <SettingItem
-            id="block-invalid-numbers"
-            label="Bloquear Números Inválidos"
-            description="Bloqueia chamadas com formato de número inválido"
+        </div>
+        
+        <div className="flex items-center justify-between">
+          <div className="space-y-0.5">
+            <Label htmlFor="blockNoValidNumber">Bloquear números inválidos</Label>
+            <p className="text-sm text-muted-foreground">
+              Bloquear chamadas com formato de número inválido
+            </p>
+          </div>
+          <Switch
+            id="blockNoValidNumber"
             checked={settings.blockNoValidNumber}
-            onChange={handleBlockNoValidNumberChange}
+            onCheckedChange={(checked) => updateSettings({ blockNoValidNumber: checked })}
           />
-          
-          <SettingItem
-            id="block-suspicious-ip"
-            label="Bloquear IPs Suspeitos"
-            description="Bloqueia chamadas de IPs marcados como suspeitos"
+        </div>
+        
+        <div className="flex items-center justify-between">
+          <div className="space-y-0.5">
+            <Label htmlFor="blockSuspiciousIP">Bloquear IPs suspeitos</Label>
+            <p className="text-sm text-muted-foreground">
+              Bloquear chamadas VoIP de endereços IP suspeitos
+            </p>
+          </div>
+          <Switch
+            id="blockSuspiciousIP"
             checked={settings.blockSuspiciousIP}
-            onChange={handleBlockSuspiciousIPChange}
+            onCheckedChange={(checked) => updateSettings({ blockSuspiciousIP: checked })}
           />
+        </div>
+        
+        <div className="flex items-center justify-between">
+          <div className="space-y-0.5">
+            <Label htmlFor="blockUnknownServers">Bloquear servidores desconhecidos</Label>
+            <p className="text-sm text-muted-foreground">
+              Bloquear chamadas de servidores VoIP não verificados
+            </p>
+          </div>
+          <Switch
+            id="blockUnknownServers"
+            checked={settings.blockUnknownServers}
+            onCheckedChange={(checked) => updateSettings({ blockUnknownServers: checked })}
+          />
+        </div>
+        
+        <div className="flex items-center justify-between">
+          <div className="space-y-0.5">
+            <Label htmlFor="blockAll">Bloquear todas as chamadas</Label>
+            <p className="text-sm text-muted-foreground">
+              Modo "Não perturbe" - bloqueia todas as chamadas
+            </p>
+          </div>
+          <Switch
+            id="blockAll"
+            checked={settings.blockAll}
+            onCheckedChange={(checked) => updateSettings({ blockAll: checked })}
+          />
+        </div>
+        
+        <div className="border-t pt-4">
+          <div className="flex items-center justify-between">
+            <div className="space-y-0.5">
+              <Label>Notificações de chamadas bloqueadas</Label>
+              <p className="text-sm text-muted-foreground">
+                Receba notificações quando chamadas forem bloqueadas
+              </p>
+            </div>
+            {hasNotificationPermission ? (
+              <div className="flex items-center text-green-600">
+                <BellRing className="mr-2 h-4 w-4" />
+                <span className="text-sm">Ativadas</span>
+              </div>
+            ) : (
+              <Button 
+                onClick={handleNotificationPermission}
+                variant="outline"
+                size="sm"
+                disabled={notificationRequested}
+              >
+                {notificationRequested ? (
+                  <>
+                    <BellOff className="mr-2 h-4 w-4" />
+                    Solicitado
+                  </>
+                ) : (
+                  <>
+                    <BellRing className="mr-2 h-4 w-4" />
+                    Ativar
+                  </>
+                )}
+              </Button>
+            )}
+          </div>
         </div>
       </CardContent>
     </Card>
   );
 }
-
-// Exportar componente memoizado
-export const BlockSettings = memo(BlockSettingsComponent);

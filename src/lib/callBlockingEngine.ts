@@ -1,171 +1,143 @@
-import { BlockedCall, BlockSettings, CustomListEntry } from "@/types";
-import { PhoneUtils } from "./phoneUtils";
-import { IPUtils } from "./ipUtils";
+import { BlockSettings, CustomListEntry } from '@/types';
+import { phoneUtils } from './phoneUtils';
+import { ipUtils } from './ipUtils';
 
-/**
- * Motor de bloqueio de chamadas - implementa a lógica central de decisão
- */
 export class CallBlockingEngine {
   /**
-   * Avalia se uma chamada deve ser bloqueada com base nas configurações e listas personalizadas
+   * Verifica se uma chamada deve ser bloqueada com base nas configurações e listas personalizadas
+   * @param phoneNumber Número de telefone da chamada
+   * @param sourceIP IP de origem da chamada (para chamadas VoIP)
+   * @param isVoIP Indica se é uma chamada VoIP
+   * @param settings Configurações de bloqueio
+   * @param customList Lista personalizada de bloqueio/permissão
+   * @returns Objeto indicando se a chamada deve ser bloqueada e o motivo
    */
-  static shouldBlockCall(
-    phoneNumber: string | undefined,
-    sourceIP: string | undefined,
-    isVoIP: boolean,
-    settings: BlockSettings,
-    customList: CustomListEntry[]
-  ): { blocked: boolean; reason: BlockedCall["callType"] | null } {
-    // Se o bloqueio total está ativado, bloquear tudo
+  public static shouldBlockCall(
+    phoneNumber?: string,
+    sourceIP?: string,
+    isVoIP: boolean = false,
+    settings: BlockSettings = {
+      blockAll: false,
+      blockAnonymous: true,
+      blockNoValidNumber: true,
+      blockSuspiciousIP: true,
+      blockUnknownServers: true
+    },
+    customList: CustomListEntry[] = []
+  ): { blocked: boolean; reason: 'anonymous' | 'unknown_server' | 'no_valid_number' | 'suspicious_ip' | 'user_blocked' | null } {
+    // Verificar modo offline - sempre usar configurações locais
+    
+    // 1. Verificar se o bloqueio total está ativado
     if (settings.blockAll) {
-      return { blocked: true, reason: "user_blocked" };
+      return { blocked: true, reason: 'user_blocked' };
     }
-
-    // Verificar lista de permissão (whitelist)
-    if (this.isInAllowList(phoneNumber, sourceIP, customList)) {
-      return { blocked: false, reason: null };
+    
+    // 2. Verificar lista personalizada (tem prioridade sobre as configurações gerais)
+    // 2.1 Verificar número de telefone na lista personalizada
+    if (phoneNumber) {
+      const normalizedNumber = phoneUtils.normalizePhoneNumber(phoneNumber);
+      
+      // Verificar correspondência exata
+      const exactMatch = customList.find(entry => 
+        entry.type === 'phone' && 
+        phoneUtils.normalizePhoneNumber(entry.value) === normalizedNumber
+      );
+      
+      if (exactMatch) {
+        return { 
+          blocked: exactMatch.isBlocked, 
+          reason: exactMatch.isBlocked ? 'user_blocked' : null 
+        };
+      }
+      
+      // Verificar correspondência de padrão
+      const patternMatch = customList.find(entry => 
+        entry.type === 'pattern' && 
+        normalizedNumber.includes(entry.value)
+      );
+      
+      if (patternMatch) {
+        return { 
+          blocked: patternMatch.isBlocked, 
+          reason: patternMatch.isBlocked ? 'user_blocked' : null 
+        };
+      }
     }
-
-    // Verificar lista de bloqueio (blacklist)
-    const blacklistReason = this.checkBlacklist(phoneNumber, sourceIP, customList);
-    if (blacklistReason) {
-      return { blocked: true, reason: "user_blocked" };
+    
+    // 2.2 Verificar IP na lista personalizada (para chamadas VoIP)
+    if (sourceIP && isVoIP) {
+      const ipMatch = customList.find(entry => 
+        entry.type === 'ip' && 
+        entry.value === sourceIP
+      );
+      
+      if (ipMatch) {
+        return { 
+          blocked: ipMatch.isBlocked, 
+          reason: ipMatch.isBlocked ? 'suspicious_ip' : null 
+        };
+      }
     }
-
-    // Verificar chamadas anônimas
-    if (settings.blockAnonymous && !phoneNumber) {
-      return { blocked: true, reason: "anonymous" };
+    
+    // 3. Verificar configurações gerais
+    // 3.1 Verificar chamadas anônimas
+    if (!phoneNumber && settings.blockAnonymous) {
+      return { blocked: true, reason: 'anonymous' };
     }
-
-    // Verificar números inválidos
-    if (settings.blockNoValidNumber && phoneNumber && !PhoneUtils.isValidPhoneNumber(phoneNumber)) {
-      return { blocked: true, reason: "no_valid_number" };
+    
+    // 3.2 Verificar números inválidos
+    if (phoneNumber && settings.blockNoValidNumber && !phoneUtils.isValidPhoneNumber(phoneNumber)) {
+      return { blocked: true, reason: 'no_valid_number' };
     }
-
-    // Verificar IPs suspeitos
-    if (settings.blockSuspiciousIP && sourceIP && IPUtils.isSuspiciousIP(sourceIP)) {
-      return { blocked: true, reason: "suspicious_ip" };
+    
+    // 3.3 Verificar IPs suspeitos (para chamadas VoIP)
+    if (sourceIP && isVoIP && settings.blockSuspiciousIP && ipUtils.isSuspiciousIP(sourceIP)) {
+      return { blocked: true, reason: 'suspicious_ip' };
     }
-
-    // Verificar servidores desconhecidos
-    if (settings.blockUnknownServers && isVoIP && IPUtils.isUnknownServer(sourceIP)) {
-      return { blocked: true, reason: "unknown_server" };
+    
+    // 3.4 Verificar servidores desconhecidos (para chamadas VoIP)
+    if (isVoIP && settings.blockUnknownServers && (!sourceIP || !ipUtils.isValidIP(sourceIP))) {
+      return { blocked: true, reason: 'unknown_server' };
     }
-
-    // Nenhuma regra de bloqueio acionada
+    
+    // 4. Verificar padrões de spam em números de telefone
+    if (phoneNumber && phoneUtils.hasSpamPattern(phoneNumber)) {
+      return { blocked: true, reason: 'user_blocked' };
+    }
+    
+    // Se chegou até aqui, a chamada não deve ser bloqueada
     return { blocked: false, reason: null };
   }
-
+  
   /**
-   * Verifica se um número ou IP está na lista de permissão
+   * Verifica se um número de telefone deve ser bloqueado
+   * @param phoneNumber Número de telefone
+   * @param settings Configurações de bloqueio
+   * @param customList Lista personalizada
+   * @returns Verdadeiro se o número deve ser bloqueado
    */
-  private static isInAllowList(
-    phoneNumber: string | undefined,
-    sourceIP: string | undefined,
+  public static shouldBlockPhoneNumber(
+    phoneNumber: string,
+    settings: BlockSettings,
     customList: CustomListEntry[]
   ): boolean {
-    const allowList = customList.filter(entry => !entry.isBlocked);
-    
-    // Verificar número de telefone
-    if (phoneNumber) {
-      const phoneMatch = allowList.some(entry => {
-        if (entry.type !== "phone" && entry.type !== "pattern") return false;
-        
-        if (entry.type === "phone") {
-          return this.normalizePhone(entry.value) === this.normalizePhone(phoneNumber);
-        } else {
-          try {
-            const regex = new RegExp(entry.value, "i");
-            return regex.test(phoneNumber);
-          } catch {
-            return false;
-          }
-        }
-      });
-      
-      if (phoneMatch) return true;
-    }
-    
-    // Verificar IP
-    if (sourceIP) {
-      const ipMatch = allowList.some(entry => {
-        if (entry.type !== "ip" && entry.type !== "pattern") return false;
-        
-        if (entry.type === "ip") {
-          return entry.value === sourceIP;
-        } else {
-          try {
-            const regex = new RegExp(entry.value, "i");
-            return regex.test(sourceIP);
-          } catch {
-            return false;
-          }
-        }
-      });
-      
-      if (ipMatch) return true;
-    }
-    
-    return false;
+    const result = this.shouldBlockCall(phoneNumber, undefined, false, settings, customList);
+    return result.blocked;
   }
-
+  
   /**
-   * Verifica se um número ou IP está na lista de bloqueio
+   * Verifica se um IP deve ser bloqueado
+   * @param ip Endereço IP
+   * @param settings Configurações de bloqueio
+   * @param customList Lista personalizada
+   * @returns Verdadeiro se o IP deve ser bloqueado
    */
-  private static checkBlacklist(
-    phoneNumber: string | undefined,
-    sourceIP: string | undefined,
+  public static shouldBlockIP(
+    ip: string,
+    settings: BlockSettings,
     customList: CustomListEntry[]
   ): boolean {
-    const blockList = customList.filter(entry => entry.isBlocked);
-    
-    // Verificar número de telefone
-    if (phoneNumber) {
-      const phoneMatch = blockList.some(entry => {
-        if (entry.type !== "phone" && entry.type !== "pattern") return false;
-        
-        if (entry.type === "phone") {
-          return this.normalizePhone(entry.value) === this.normalizePhone(phoneNumber);
-        } else {
-          try {
-            const regex = new RegExp(entry.value, "i");
-            return regex.test(phoneNumber);
-          } catch {
-            return false;
-          }
-        }
-      });
-      
-      if (phoneMatch) return true;
-    }
-    
-    // Verificar IP
-    if (sourceIP) {
-      const ipMatch = blockList.some(entry => {
-        if (entry.type !== "ip" && entry.type !== "pattern") return false;
-        
-        if (entry.type === "ip") {
-          return entry.value === sourceIP;
-        } else {
-          try {
-            const regex = new RegExp(entry.value, "i");
-            return regex.test(sourceIP);
-          } catch {
-            return false;
-          }
-        }
-      });
-      
-      if (ipMatch) return true;
-    }
-    
-    return false;
-  }
-
-  /**
-   * Normaliza um número de telefone para comparação
-   */
-  private static normalizePhone(phone: string): string {
-    return phone.replace(/\D/g, "");
+    const result = this.shouldBlockCall(undefined, ip, true, settings, customList);
+    return result.blocked;
   }
 }

@@ -1,70 +1,87 @@
-import { Card, CardContent, CardHeader, CardTitle, RadioGroup, RadioGroupItem, Label } from "@/components/ui";
-import { SectionImage } from "./SectionImage";
-import { memo, useCallback } from "react";
+import { useState } from 'react';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { useCallBlocker } from '@/hooks/useCallBlocker';
+import { Shield, ShieldAlert, ShieldCheck } from 'lucide-react';
+import { useSupabaseAuth } from '@/hooks/useSupabaseAuth';
 
-interface SecurityLevelSelectorProps {
-  level: 'low' | 'medium' | 'high';
-  onLevelChange: (level: 'low' | 'medium' | 'high') => void;
-  className?: string;
-}
-
-function SecurityLevelSelectorComponent({ 
-  level, 
-  onLevelChange, 
-  className 
-}: SecurityLevelSelectorProps) {
-  const handleLevelChange = useCallback((value: string) => {
-    onLevelChange(value as 'low' | 'medium' | 'high');
-  }, [onLevelChange]);
-
+export function SecurityLevelSelector() {
+  const { securityLevel, applySecurityRules } = useCallBlocker();
+  const { user, syncService } = useSupabaseAuth();
+  const [syncing, setSyncing] = useState(false);
+  
+  // Função para aplicar nível de segurança e sincronizar
+  const handleApplyLevel = async (level: 'low' | 'medium' | 'high') => {
+    // Aplicar regras de segurança
+    applySecurityRules(level);
+    
+    // Se o usuário estiver autenticado, sincronizar configurações
+    if (user) {
+      try {
+        setSyncing(true);
+        await syncService.syncBlockSettings({
+          blockAll: level === 'high',
+          blockAnonymous: level !== 'low',
+          blockUnknownServers: level === 'high',
+          blockNoValidNumber: true,
+          blockSuspiciousIP: level !== 'low'
+        });
+      } catch (error) {
+        console.error('Erro ao sincronizar configurações:', error);
+      } finally {
+        setSyncing(false);
+      }
+    }
+  };
+  
   return (
-    <Card className={className}>
-      <CardHeader className="pb-2 flex flex-row items-center space-x-2">
-        <SectionImage section="security" size="sm" />
-        <CardTitle className="text-lg font-semibold text-neonBlue">Nível de Segurança</CardTitle>
+    <Card className="w-full">
+      <CardHeader>
+        <CardTitle>Nível de Segurança</CardTitle>
+        <CardDescription>
+          Escolha o nível de proteção para seu dispositivo
+        </CardDescription>
       </CardHeader>
       <CardContent>
-        <RadioGroup 
-          value={level} 
-          onValueChange={handleLevelChange}
-          className="space-y-3"
-        >
-          <div className="flex items-start space-x-3 p-3 rounded-lg border border-neonBlue/20 bg-darkNeon-700">
-            <RadioGroupItem value="low" id="low" className="mt-1" />
-            <div className="space-y-1">
-              <Label htmlFor="low" className="text-sm font-medium">Baixo</Label>
-              <p className="text-xs text-muted-foreground">
-                Bloqueia apenas fraudes óbvias e permite a maioria das chamadas.
-                Ideal para quem recebe chamadas importantes de números desconhecidos.
-              </p>
-            </div>
-          </div>
+        <div className="grid grid-cols-3 gap-2">
+          <Button
+            variant={securityLevel === 'low' ? "default" : "outline"}
+            className="flex flex-col items-center justify-center h-24"
+            onClick={() => handleApplyLevel('low')}
+            disabled={syncing}
+          >
+            <Shield className="h-8 w-8 mb-2" />
+            <span>Básico</span>
+          </Button>
           
-          <div className="flex items-start space-x-3 p-3 rounded-lg border border-neonBlue/20 bg-darkNeon-700">
-            <RadioGroupItem value="medium" id="medium" className="mt-1" />
-            <div className="space-y-1">
-              <Label htmlFor="medium" className="text-sm font-medium">Médio</Label>
-              <p className="text-xs text-muted-foreground">
-                Bloqueia chamadas anônimas, telemarketing e fraudes conhecidas.
-                Equilíbrio entre proteção e acessibilidade.
-              </p>
-            </div>
-          </div>
+          <Button
+            variant={securityLevel === 'medium' ? "default" : "outline"}
+            className="flex flex-col items-center justify-center h-24"
+            onClick={() => handleApplyLevel('medium')}
+            disabled={syncing}
+          >
+            <ShieldCheck className="h-8 w-8 mb-2" />
+            <span>Médio</span>
+          </Button>
           
-          <div className="flex items-start space-x-3 p-3 rounded-lg border border-neonBlue/20 bg-darkNeon-700">
-            <RadioGroupItem value="high" id="high" className="mt-1" />
-            <div className="space-y-1">
-              <Label htmlFor="high" className="text-sm font-medium">Alto</Label>
-              <p className="text-xs text-muted-foreground">
-                Proteção máxima. Bloqueia todas as chamadas suspeitas, incluindo servidores desconhecidos.
-                Pode bloquear algumas chamadas legítimas.
-              </p>
-            </div>
-          </div>
-        </RadioGroup>
+          <Button
+            variant={securityLevel === 'high' ? "default" : "outline"}
+            className="flex flex-col items-center justify-center h-24"
+            onClick={() => handleApplyLevel('high')}
+            disabled={syncing}
+          >
+            <ShieldAlert className="h-8 w-8 mb-2" />
+            <span>Máximo</span>
+          </Button>
+        </div>
+        
+        <p className="text-sm text-muted-foreground mt-4">
+          {securityLevel === 'low' && "Bloqueia apenas chamadas com padrões de fraude conhecidos."}
+          {securityLevel === 'medium' && "Bloqueia chamadas anônimas e a maioria dos números de telemarketing."}
+          {securityLevel === 'high' && "Proteção máxima, bloqueia todas as chamadas suspeitas."}
+          {user && " Suas configurações são sincronizadas automaticamente."}
+        </p>
       </CardContent>
     </Card>
   );
 }
-
-export const SecurityLevelSelector = memo(SecurityLevelSelectorComponent);
