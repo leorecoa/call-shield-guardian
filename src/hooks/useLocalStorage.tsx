@@ -1,5 +1,4 @@
-
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { BlockedCall, StatsSummary, BlockSettings, CustomListEntry } from '@/types';
 
 export const INITIAL_STATS: StatsSummary = {
@@ -23,49 +22,86 @@ export const DEFAULT_SETTINGS: BlockSettings = {
 };
 
 export function useLocalStorage() {
-  const [blockedCalls, setBlockedCalls] = useState<BlockedCall[]>([]);
-  const [settings, setSettings] = useState<BlockSettings>(DEFAULT_SETTINGS);
-  const [customList, setCustomList] = useState<CustomListEntry[]>([]);
-  const [isActive, setIsActive] = useState<boolean>(true);
+  const [blockedCalls, setBlockedCallsState] = useState<BlockedCall[]>([]);
+  const [settings, setSettingsState] = useState<BlockSettings>(DEFAULT_SETTINGS);
+  const [customList, setCustomListState] = useState<CustomListEntry[]>([]);
+  const [isActive, setIsActiveState] = useState<boolean>(true);
   
   // Carregar dados do localStorage ao iniciar
   useEffect(() => {
     try {
       const savedCalls = localStorage.getItem('blockedCalls');
       if (savedCalls) {
-        setBlockedCalls(JSON.parse(savedCalls));
+        setBlockedCallsState(JSON.parse(savedCalls));
       }
       
       const savedSettings = localStorage.getItem('blockSettings');
       if (savedSettings) {
-        setSettings(JSON.parse(savedSettings));
+        setSettingsState(JSON.parse(savedSettings));
       }
       
       const savedCustomList = localStorage.getItem('customList');
       if (savedCustomList) {
-        setCustomList(JSON.parse(savedCustomList));
+        setCustomListState(JSON.parse(savedCustomList));
       }
       
       const savedIsActive = localStorage.getItem('isActive');
       if (savedIsActive !== null) {
-        setIsActive(JSON.parse(savedIsActive));
+        setIsActiveState(JSON.parse(savedIsActive));
       }
     } catch (error) {
       console.error('Erro ao carregar dados do localStorage:', error);
     }
   }, []);
   
-  // Salvar dados no localStorage quando atualizados
-  useEffect(() => {
-    try {
-      localStorage.setItem('blockedCalls', JSON.stringify(blockedCalls));
-      localStorage.setItem('blockSettings', JSON.stringify(settings));
-      localStorage.setItem('customList', JSON.stringify(customList));
-      localStorage.setItem('isActive', JSON.stringify(isActive));
-    } catch (error) {
-      console.error('Erro ao salvar dados no localStorage:', error);
-    }
-  }, [blockedCalls, settings, customList, isActive]);
+  // Memoize setters para evitar recriações desnecessárias
+  const setBlockedCalls = useCallback((value: BlockedCall[] | ((prev: BlockedCall[]) => BlockedCall[])) => {
+    setBlockedCallsState(prev => {
+      const newValue = typeof value === 'function' ? value(prev) : value;
+      try {
+        localStorage.setItem('blockedCalls', JSON.stringify(newValue));
+      } catch (error) {
+        console.error('Erro ao salvar chamadas bloqueadas:', error);
+      }
+      return newValue;
+    });
+  }, []);
+  
+  const setSettings = useCallback((value: BlockSettings | ((prev: BlockSettings) => BlockSettings)) => {
+    setSettingsState(prev => {
+      const newValue = typeof value === 'function' ? value(prev) : value;
+      try {
+        localStorage.setItem('blockSettings', JSON.stringify(newValue));
+      } catch (error) {
+        console.error('Erro ao salvar configurações:', error);
+      }
+      return newValue;
+    });
+  }, []);
+  
+  const setCustomList = useCallback((value: CustomListEntry[] | ((prev: CustomListEntry[]) => CustomListEntry[])) => {
+    setCustomListState(prev => {
+      const newValue = typeof value === 'function' ? value(prev) : value;
+      try {
+        localStorage.setItem('customList', JSON.stringify(newValue));
+      } catch (error) {
+        console.error('Erro ao salvar lista personalizada:', error);
+      }
+      return newValue;
+    });
+  }, []);
+  
+  const setIsActive = useCallback((value: boolean | ((prev: boolean) => boolean)) => {
+    setIsActiveState(prev => {
+      const newValue = typeof value === 'function' ? value(prev) : value;
+      try {
+        localStorage.setItem('isActive', JSON.stringify(newValue));
+      } catch (error) {
+        console.error('Erro ao salvar estado ativo:', error);
+      }
+      return newValue;
+    });
+  }, []);
   
   return {
     blockedCalls,

@@ -1,69 +1,47 @@
-
-import { Shield, ShieldCheck } from "lucide-react";
-import { Switch } from "@/components/ui/switch";
-import { cn } from "@/lib/utils";
+import { memo } from "react";
+import { Shield } from "./Shield";
+import { motion } from "framer-motion";
 
 interface AppHeaderProps {
   isActive: boolean;
-  onToggleActive: () => void;
+  onToggle: () => void;
+  className?: string;
 }
 
-export function AppHeader({ isActive, onToggleActive }: AppHeaderProps) {
+function AppHeaderComponent({ isActive, onToggle, className }: AppHeaderProps) {
   return (
-    <header className="relative overflow-hidden flex items-center justify-between p-4 sm:p-5 bg-gradient-to-r from-darkNeon-800 to-darkNeon-700 backdrop-blur-md border border-neonBlue/20 shadow-lg rounded-lg mb-4 sm:mb-6">
-      {/* Background glow effect */}
-      {isActive && (
-        <div className="absolute inset-0 overflow-hidden">
-          <div className="absolute -inset-[100%] bg-neonBlue/5 animate-spin duration-[20000ms] rounded-full blur-3xl"></div>
-        </div>
-      )}
-      
-      <div className="flex items-center relative z-10">
-        <div className="relative">
-          {isActive && <div className="absolute inset-0 bg-neonBlue/20 rounded-full animate-pulse"></div>}
-          <img
-            src="/lovable-uploads/fab841df-3f21-4b5f-99ad-6de9fc9f5586.png"
-            alt="Call Shield Logo"
-            className={cn(
-              "w-14 h-14 sm:w-16 sm:h-16 rounded-xl",
-              isActive && "animate-pulse-shield"
-            )}
-          />
-        </div>
-        <div className="ml-3 sm:ml-4">
-          <h1 className="text-xl sm:text-2xl font-bold text-white">
-            Call <span className="text-neonBlue">Shield</span>
-          </h1>
-          <p className="text-xs sm:text-sm text-neonGreen/90 font-medium hidden sm:block">Proteção VoIP</p>
-        </div>
+    <header className={`flex items-center justify-between p-4 ${className}`}>
+      <div className="flex items-center gap-3">
+        <motion.div
+          whileHover={{ rotate: [0, -10, 10, -10, 0] }}
+          transition={{ duration: 0.5 }}
+        >
+          <Shield active={isActive} size="sm" />
+        </motion.div>
+        <motion.h1 
+          className="text-xl font-bold text-neonBlue"
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+        >
+          Call Shield Guardian
+        </motion.h1>
       </div>
-      
-      <div className="flex items-center gap-2 sm:gap-4 relative z-10">
-        <div className={cn(
-          "px-2 py-1 sm:px-3 sm:py-1.5 rounded-full flex items-center gap-1 sm:gap-2",
-          isActive 
-            ? "bg-neonGreen/20 text-neonGreen border border-neonGreen/30" 
-            : "bg-red-500/20 text-red-400 border border-red-500/30"
-        )}>
-          {isActive ? (
-            <ShieldCheck className="w-3 h-3 sm:w-4 sm:h-4" />
-          ) : (
-            <Shield className="w-3 h-3 sm:w-4 sm:h-4" />
-          )}
-          <span className="text-xs sm:text-sm font-medium">
-            {isActive ? "Proteção Ativa" : "Inativa"}
-          </span>
-        </div>
-        
-        <Switch 
-          checked={isActive} 
-          onCheckedChange={onToggleActive}
-          className={cn(
-            "data-[state=checked]:bg-neonGreen",
-            "relative overflow-visible"
-          )}
-        />
-      </div>
+      <motion.button
+        onClick={onToggle}
+        className={`px-4 py-2 rounded-lg font-medium transition-colors ${
+          isActive
+            ? "bg-neonBlue text-white hover:bg-neonBlue/90"
+            : "bg-gray-700 text-gray-300 hover:bg-gray-600"
+        }`}
+        whileHover={{ scale: 1.05 }}
+        whileTap={{ scale: 0.95 }}
+      >
+        {isActive ? "Proteção Ativa" : "Proteção Inativa"}
+      </motion.button>
     </header>
   );
 }
+
+// Exportar componente memoizado para evitar renderizações desnecessárias
+export const AppHeader = memo(AppHeaderComponent);

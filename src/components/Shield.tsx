@@ -1,6 +1,6 @@
-
 import { cn } from "@/lib/utils";
 import { ShieldCheck, ShieldAlert } from "lucide-react";
+import { memo, useMemo } from "react";
 
 interface ShieldProps {
   active?: boolean;
@@ -8,20 +8,47 @@ interface ShieldProps {
   className?: string;
 }
 
-export function Shield({ active = true, size = "md", className }: ShieldProps) {
-  const sizeClasses = {
-    sm: "h-10 w-10",
-    md: "h-16 w-16",
-    lg: "h-24 w-24",
-    xl: "h-36 w-36 sm:h-40 sm:w-40"
-  };
+const sizeClasses = {
+  sm: "h-10 w-10",
+  md: "h-16 w-16",
+  lg: "h-24 w-24",
+  xl: "h-36 w-36 sm:h-40 sm:w-40"
+};
 
-  const glowSizes = {
-    sm: "h-16 w-16",
-    md: "h-24 w-24",
-    lg: "h-36 w-36",
-    xl: "h-44 w-44 sm:h-48 sm:w-48"
-  };
+const glowSizes = {
+  sm: "h-16 w-16",
+  md: "h-24 w-24",
+  lg: "h-36 w-36",
+  xl: "h-44 w-44 sm:h-48 sm:w-48"
+};
+
+const iconSizes = {
+  sm: "h-5 w-5",
+  md: "h-8 w-8",
+  lg: "h-12 w-12",
+  xl: "h-20 w-20"
+};
+
+function ShieldComponent({ active = true, size = "md", className }: ShieldProps) {
+  // Memoize the shield icon to prevent unnecessary re-renders
+  const ShieldIcon = useMemo(() => {
+    return active ? (
+      <ShieldCheck 
+        className={cn(
+          "text-white opacity-90",
+          iconSizes[size],
+          "animate-pulse-shield"
+        )}
+      />
+    ) : (
+      <ShieldAlert
+        className={cn(
+          "text-white/70",
+          iconSizes[size]
+        )}
+      />
+    );
+  }, [active, size]);
 
   return (
     <div 
@@ -46,7 +73,6 @@ export function Shield({ active = true, size = "md", className }: ShieldProps) {
               "animate-pulse [animation-delay:300ms]"
             )} 
           />
-          {/* Enhanced visual elements */}
           <span 
             className={cn(
               "absolute bg-neonGreen/5 rounded-full blur-md",
@@ -75,36 +101,15 @@ export function Shield({ active = true, size = "md", className }: ShieldProps) {
       )}>
         {active && (
           <>
-            {/* Enhanced inner glow effects */}
             <span className="absolute inset-0 bg-white/10 rounded-xl animate-pulse [animation-delay:200ms]" />
             <span className="absolute -inset-1 bg-neonBlue/20 blur-md animate-pulse [animation-delay:400ms]" />
             <span className="absolute top-0 left-0 w-full h-1/2 bg-gradient-to-b from-white/20 to-transparent" />
           </>
         )}
-        {active ? (
-          <ShieldCheck 
-            className={cn(
-              "text-white opacity-90",
-              size === "sm" ? "h-5 w-5" : "",
-              size === "md" ? "h-8 w-8" : "",
-              size === "lg" ? "h-12 w-12" : "",
-              size === "xl" ? "h-20 w-20" : "",
-              "animate-pulse-shield"
-            )}
-          />
-        ) : (
-          <ShieldAlert
-            className={cn(
-              "text-white/70",
-              size === "sm" ? "h-5 w-5" : "",
-              size === "md" ? "h-8 w-8" : "",
-              size === "lg" ? "h-12 w-12" : "",
-              size === "xl" ? "h-20 w-20" : ""
-            )}
-          />
-        )}
+        {ShieldIcon}
       </div>
-      {/* Removed "Camadas Protegidas" text */}
     </div>
   );
 }
+
+export const Shield = memo(ShieldComponent);

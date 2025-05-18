@@ -1,150 +1,95 @@
-
-@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap');
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-@layer base {
-  :root {
-    --background: 228 15% 10%;
-    --foreground: 210 40% 98%;
-
-    --card: 228 15% 12%;
-    --card-foreground: 210 40% 98%;
-
-    --popover: 228 15% 12%;
-    --popover-foreground: 210 40% 98%;
-
-    --primary: 196 100% 50%;
-    --primary-foreground: 210 40% 98%;
-
-    --secondary: 285 80% 59%;
-    --secondary-foreground: 210 40% 98%;
-
-    --muted: 228 15% 15%;
-    --muted-foreground: 215 20% 65%;
-
-    --accent: 120 100% 54%;
-    --accent-foreground: 210 40% 98%;
-
-    --destructive: 0 84% 60%;
-    --destructive-foreground: 210 40% 98%;
-
-    --border: 228 15% 20%;
-    --input: 228 15% 20%;
-    --ring: 196 100% 50%;
-
-    --radius: 0.75rem;
-
-    --sidebar-background: 228 15% 10%;
-    --sidebar-foreground: 228 20% 95%;
-    --sidebar-primary: 196 100% 50%;
-    --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 228 15% 15%;
-    --sidebar-accent-foreground: 228 20% 95%;
-    --sidebar-border: 228 15% 20%;
-    --sidebar-ring: 196 100% 50%;
-  }
+:root {
+  /* Cores neon principais */
+  --neon-blue: #4FACFE;
+  --neon-blue-glow: rgba(79, 172, 254, 0.5);
+  --neon-purple: #B721FF;
+  --neon-purple-glow: rgba(183, 33, 255, 0.5);
+  --neon-pink: #FF0080;
+  --neon-pink-glow: rgba(255, 0, 128, 0.5);
+  --neon-green: #00F260;
+  --neon-green-glow: rgba(0, 242, 96, 0.5);
+  --neon-yellow: #FFDD00;
+  --neon-yellow-glow: rgba(255, 221, 0, 0.5);
+  
+  /* Cores de fundo */
+  --dark-neon-900: #0A0B14;
+  --dark-neon-800: #12141F;
+  --dark-neon-700: #1A1C2A;
+  --dark-neon-600: #222435;
+  
+  /* Cores de texto */
+  --text-primary: #FFFFFF;
+  --text-secondary: rgba(255, 255, 255, 0.7);
+  --text-muted: rgba(255, 255, 255, 0.5);
 }
 
 @layer base {
-  * {
-    @apply border-border;
-  }
-
   body {
-    @apply bg-background text-foreground font-sans;
+    @apply bg-darkNeon-900 text-white;
+  }
+}
+
+@layer components {
+  /* Animações personalizadas */
+  .animate-pulse-shield {
+    animation: pulse-shield 2s infinite;
   }
   
-  body::before {
-    content: '';
-    @apply fixed inset-0 z-[-1] bg-[url('/lovable-uploads/fab841df-3f21-4b5f-99ad-6de9fc9f5586.png')] bg-center opacity-[0.02] pointer-events-none;
+  .animate-spin-slow {
+    animation: spin 8s linear infinite;
   }
-}
-
-/* Consolidated animations */
-@keyframes fade-in {
-  from {
-    opacity: 0;
-    transform: scale(0.95) translateY(10px);
+  
+  .animate-float {
+    animation: float 3s ease-in-out infinite;
   }
-  to {
-    opacity: 1;
-    transform: scale(1) translateY(0);
+  
+  /* Efeitos de brilho neon */
+  .glow-neonBlue {
+    box-shadow: 0 0 10px var(--neon-blue-glow), 0 0 20px var(--neon-blue-glow);
   }
-}
-
-@keyframes loading {
-  0% {
-    width: 0%;
-    opacity: 0.8;
+  
+  .glow-neonPurple {
+    box-shadow: 0 0 10px var(--neon-purple-glow), 0 0 20px var(--neon-purple-glow);
   }
-  50% {
-    width: 70%;
-    opacity: 1;
+  
+  .glow-neonPink {
+    box-shadow: 0 0 10px var(--neon-pink-glow), 0 0 20px var(--neon-pink-glow);
   }
-  100% {
-    width: 100%;
-    opacity: 0.8;
+  
+  .glow-neonGreen {
+    box-shadow: 0 0 10px var(--neon-green-glow), 0 0 20px var(--neon-green-glow);
+  }
+  
+  .glow-neonYellow {
+    box-shadow: 0 0 10px var(--neon-yellow-glow), 0 0 20px var(--neon-yellow-glow);
   }
 }
 
 @keyframes pulse-shield {
-  0%, 100% { 
-    opacity: 1;
-    filter: drop-shadow(0 0 8px rgba(0, 170, 255, 0.8));
-  }
-  50% { 
-    opacity: 0.9;
-    filter: drop-shadow(0 0 20px rgba(0, 170, 255, 1));
-  }
-}
-
-@keyframes spin-slow {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
-}
-
-@keyframes glow-security {
   0%, 100% {
-    box-shadow: 0 0 5px rgba(57, 255, 20, 0.5);
+    opacity: 1;
+    transform: scale(1);
   }
   50% {
-    box-shadow: 0 0 15px rgba(57, 255, 20, 0.8);
+    opacity: 0.8;
+    transform: scale(1.05);
   }
 }
 
-/* Animation utilities */
-.animate-fade-in {
-  animation: fade-in 0.8s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
 }
 
-.animate-pulse-shield {
-  animation: pulse-shield 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
-}
-
-.animate-spin-slow {
-  animation: spin-slow 12s linear infinite;
-}
-
-/* Shadow effects */
-.shadow-glow {
-  box-shadow: 0 0 10px rgba(0, 170, 255, 0.3);
-}
-
-.shadow-glow-sm {
-  box-shadow: 0 0 5px rgba(0, 170, 255, 0.2);
-}
-
-.drop-shadow-glow {
-  filter: drop-shadow(0 0 10px rgba(0, 170, 255, 0.5));
-}
-
-.security-element {
-  animation: glow-security 3s ease-in-out infinite;
+/* Otimização para carregamento de imagens */
+img {
+  content-visibility: auto;
 }

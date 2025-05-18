@@ -1,5 +1,4 @@
-
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import { BlockSettings, CustomListEntry } from '@/types';
 import { NativeBridge, isAndroid } from './useBridgeNative';
 
@@ -10,24 +9,33 @@ export function useNativeService(
   hasPermissions: boolean,
   nativeBridge: NativeBridge
 ) {
-  // Update native service when settings change
+  const prevSettingsRef = useRef<string>("");
+  
   useEffect(() => {
     if (!isAndroid() || !nativeBridge) return;
     
+    // Serialize current settings to compare with previous
+    const currentSettings = JSON.stringify({
+      isActive,
+      settings,
+      customList: customList.filter(entry => entry.isBlocked)
+    });
+    
+    // Skip if nothing changed
+    if (currentSettings === prevSettingsRef.current) return;
+    prevSettingsRef.current = currentSettings;
+    
+    // Update native service
     const updateNativeService = async () => {
       try {
-        // Start or stop service based on activation status
         if (isActive && hasPermissions) {
+          // Start service and update rules
           if (nativeBridge.startCallBlockingService) {
             await nativeBridge.startCallBlockingService();
           }
           
-          // Update blocking rules
           if (nativeBridge.updateBlockingRules) {
-            const rules = JSON.stringify({
-              settings,
-              customList: customList.filter(entry => entry.isBlocked)
-            });
+            const rules = JSON.stringify({ settings, customList: customList.filter(entry => entry.isBlocked) });
             await nativeBridge.updateBlockingRules(rules);
           }
         } else if (!isActive && nativeBridge.stopCallBlockingService) {
@@ -38,11 +46,6 @@ export function useNativeService(
       }
     };
     
-    // Don't use a promise without handling potential errors
-    updateNativeService().catch(error => {
-      console.error("Failed to update native service:", error);
-    });
+    updateNativeService();
   }, [isActive, settings, customList, hasPermissions, nativeBridge]);
-
-  return null;
 }
