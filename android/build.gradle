@@ -1,0 +1,49 @@
+// build.gradle (nível de projeto)
+
+buildscript {
+    ext {
+        kotlin_version = '1.9.20'
+        agp_version = '8.10.0'
+    }
+
+    repositories {
+        google()
+        mavenCentral()
+        gradlePluginPortal()
+    }
+
+    dependencies {
+        classpath 'com.android.tools.build:gradle:' + String.valueOf(agp_version)
+        classpath 'com.google.gms:google-services:4.4.1'
+        classpath 'org.jetbrains.kotlin:kotlin-gradle-plugin:' + String.valueOf(kotlin_version)
+        // Adicione aqui outros classpath necessários
+        // classpath 'com.google.firebase:firebase-crashlytics-gradle:2.9.9'
+    }
+}
+
+// Importa variáveis compartilhadas (opcional)
+if (file('variables.gradle').exists()) {
+    apply from: 'variables.gradle'
+} else {
+    logger.warn('Arquivo variables.gradle não encontrado')
+}
+
+allprojects {
+    repositories {
+        google()
+        mavenCentral()
+        maven { url 'https://jitpack.io' } // Descomente se usar bibliotecas do JitPack
+    }
+
+    configurations.configureEach {
+        resolutionStrategy {
+            // Forçar versões específicas para evitar conflitos
+            force 'androidx.fragment:fragment:1.6.1'
+            force 'androidx.core:core-ktx:1.13.0'
+            force 'androidx.annotation:annotation:1.7.1'
+            force 'androidx.lifecycle:lifecycle-runtime:2.6.2'
+            force 'androidx.tracing:tracing:1.1.0'
+            force 'androidx.profileinstaller:profileinstaller:1.3.1'
+        }
+    }
+}
