@@ -1,5 +1,4 @@
-
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useToast } from "@/components/ui/use-toast";
 
 // Interface para simular a ponte nativa
@@ -28,25 +27,11 @@ export function useBridgeNative() {
     const initNativeBridge = async () => {
       try {
         // Simula a obtenção da ponte nativa
-        console.log("Inicializando ponte com código nativo Android...");
-        
-        // Em um aplicativo real, você registraria os métodos nativos
         const bridge: NativeBridge = {
-          startCallBlockingService: async () => {
-            console.log("Serviço de bloqueio iniciado nativamente");
-            return { success: true };
-          },
-          stopCallBlockingService: async () => {
-            console.log("Serviço de bloqueio parado nativamente");
-            return { success: true };
-          },
-          updateBlockingRules: async (rules: string) => {
-            console.log("Regras de bloqueio atualizadas:", rules);
-            return { success: true };
-          },
+          startCallBlockingService: async () => ({ success: true }),
+          stopCallBlockingService: async () => ({ success: true }),
+          updateBlockingRules: async (rules: string) => ({ success: true }),
           requestCallPermissions: async () => {
-            console.log("Permissões de chamada solicitadas");
-            // Em um aplicativo real, isto solicitaria permissões do Android
             setHasPermissions(true);
             return { granted: true };
           }
@@ -72,7 +57,7 @@ export function useBridgeNative() {
     initNativeBridge();
   }, [toast]);
 
-  const requestPermissions = async () => {
+  const requestPermissions = useCallback(async () => {
     if (isAndroid() && nativeBridge.requestCallPermissions) {
       try {
         const { granted } = await nativeBridge.requestCallPermissions();
@@ -84,12 +69,11 @@ export function useBridgeNative() {
       }
     }
     return { granted: false };
-  };
+  }, [nativeBridge]);
 
   return {
     nativeBridge,
     hasPermissions,
-    setHasPermissions,
     requestPermissions
   };
 }

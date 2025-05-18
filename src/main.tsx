@@ -1,44 +1,41 @@
+import React from 'react';
+import ReactDOM from 'react-dom/client';
+import { createBrowserRouter, RouterProvider } from 'react-router-dom';
+import './index.css';
 
-import { createRoot } from 'react-dom/client'
-import App from './App.tsx'
-import './index.css'
+// Importações lazy para reduzir o bundle inicial
+const Index = React.lazy(() => import('./pages/Index'));
+const NotFound = React.lazy(() => import('./pages/NotFound'));
 
-// Improved initialization with better error handling
-try {
-  const rootElement = document.getElementById("root");
-  if (rootElement) {
-    const root = createRoot(rootElement);
-    root.render(<App />);
-  } else {
-    console.error("Root element not found");
-    document.body.innerHTML = `
-      <div style="padding: 20px; text-align: center">
-        <h2>Unable to initialize application</h2>
-        <p>The root element was not found.</p>
-        <button onclick="window.location.reload()">Reload</button>
-      </div>
-    `;
-  }
-} catch (error) {
-  console.error('Critical error initializing app:', error);
-  
-  // Simple error recovery attempt with immediate fallback
-  const rootElement = document.getElementById("root");
-  if (rootElement) {
-    try {
-      createRoot(rootElement).render(<App />);
-    } catch (err) {
-      console.error('Failed second initialization attempt:', err);
-      document.body.innerHTML = `
-        <div style="padding: 20px; text-align: center; font-family: system-ui, -apple-system, sans-serif;">
-          <h2>Error initializing application</h2>
-          <p>Please check your connection and try again.</p>
-          <button style="padding: 8px 16px; background: #3589B8; color: white; border: none; border-radius: 4px; cursor: pointer;" 
-                  onclick="window.location.reload()">
-            Try Again
-          </button>
-        </div>
-      `;
-    }
-  }
-}
+// Fallback para carregamento
+const LoadingFallback = () => (
+  <div className="flex items-center justify-center min-h-screen bg-darkNeon-900">
+    <div className="text-neonBlue text-xl">Carregando...</div>
+  </div>
+);
+
+// Configuração do router
+const router = createBrowserRouter([
+  {
+    path: '/',
+    element: (
+      <React.Suspense fallback={<LoadingFallback />}>
+        <Index />
+      </React.Suspense>
+    ),
+  },
+  {
+    path: '*',
+    element: (
+      <React.Suspense fallback={<LoadingFallback />}>
+        <NotFound />
+      </React.Suspense>
+    ),
+  },
+]);
+
+ReactDOM.createRoot(document.getElementById('root')!).render(
+  <React.StrictMode>
+    <RouterProvider router={router} />
+  </React.StrictMode>,
+);

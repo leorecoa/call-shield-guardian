@@ -1,14 +1,8 @@
-
 import { CustomListEntry } from "@/types";
-import { useState } from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { PlusCircle, X } from "lucide-react";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { ScrollArea } from "@/components/ui/scroll-area";
+import { Card, CardContent, CardHeader, CardTitle, Button, Input, Select, SelectContent, SelectItem, SelectTrigger, SelectValue, Switch, Label, ScrollArea } from "@/components/ui";
+import { Trash2, Plus } from "lucide-react";
+import { SectionImage } from "./SectionImage";
+import { memo, useCallback, useState } from "react";
 
 interface CustomListManagerProps {
   entries: CustomListEntry[];
@@ -17,67 +11,98 @@ interface CustomListManagerProps {
   className?: string;
 }
 
-export function CustomListManager({ entries, onAddEntry, onRemoveEntry, className }: CustomListManagerProps) {
+// Componente de entrada individual memoizado
+const EntryItem = memo(({ 
+  entry, 
+  onRemove 
+}: { 
+  entry: CustomListEntry; 
+  onRemove: (id: string) => void;
+}) => {
+  const handleRemove = useCallback(() => {
+    onRemove(entry.id);
+  }, [entry.id, onRemove]);
+
+  return (
+    <div className="flex items-center justify-between p-3 bg-darkNeon-700 rounded-lg border border-neonBlue/20">
+      <div>
+        <div className="font-medium text-sm text-neonBlue">{entry.value}</div>
+        <div className="text-xs text-muted-foreground flex items-center gap-2">
+          <span className="capitalize">{entry.type}</span>
+          <span className={`px-2 py-0.5 rounded-full text-xs ${
+            entry.isBlocked 
+              ? "bg-neonPink/20 text-neonPink" 
+              : "bg-neonGreen/20 text-neonGreen"
+          }`}>
+            {entry.isBlocked ? "Bloqueado" : "Permitido"}
+          </span>
+        </div>
+      </div>
+      <Button 
+        variant="ghost" 
+        size="sm" 
+        onClick={handleRemove}
+        className="h-8 w-8 p-0 text-neonPink hover:bg-neonPink/20"
+      >
+        <Trash2 className="h-4 w-4" />
+      </Button>
+    </div>
+  );
+});
+
+EntryItem.displayName = "EntryItem";
+
+function CustomListManagerComponent({ 
+  entries, 
+  onAddEntry, 
+  onRemoveEntry, 
+  className 
+}: CustomListManagerProps) {
   const [value, setValue] = useState("");
   const [type, setType] = useState<"phone" | "ip" | "pattern">("phone");
   const [isBlocked, setIsBlocked] = useState(true);
-  const [notes, setNotes] = useState("");
-  const [activeTab, setActiveTab] = useState("blocklist");
 
-  const blockedEntries = entries.filter((entry) => entry.isBlocked);
-  const allowedEntries = entries.filter((entry) => !entry.isBlocked);
-
-  const handleAddEntry = () => {
+  const handleAddEntry = useCallback(() => {
     if (!value.trim()) return;
     
     onAddEntry({
       value: value.trim(),
       type,
-      isBlocked: activeTab === "blocklist",
-      notes: notes.trim() || undefined,
+      isBlocked,
+      notes: ""
     });
     
     setValue("");
-    setNotes("");
-  };
+  }, [value, type, isBlocked, onAddEntry]);
 
-  const getTypeLabel = (type: CustomListEntry["type"]) => {
-    switch (type) {
-      case "phone":
-        return "Telefone";
-      case "ip":
-        return "Endereço IP";
-      case "pattern":
-        return "Padrão";
+  const handleKeyDown = useCallback((e: React.KeyboardEvent) => {
+    if (e.key === "Enter") {
+      handleAddEntry();
     }
-  };
+  }, [handleAddEntry]);
 
   return (
     <Card className={className}>
-      <CardHeader className="pb-2">
-        <CardTitle className="text-lg font-semibold">Listas Personalizadas</CardTitle>
+      <CardHeader className="pb-2 flex flex-row items-center space-x-2">
+        <SectionImage section="custom" size="sm" />
+        <CardTitle className="text-lg font-semibold text-neonYellow">Lista Personalizada</CardTitle>
       </CardHeader>
       <CardContent>
-        <Tabs defaultValue="blocklist" onValueChange={setActiveTab}>
-          <TabsList className="grid w-full grid-cols-2 mb-4">
-            <TabsTrigger value="blocklist">Lista de Bloqueio</TabsTrigger>
-            <TabsTrigger value="allowlist">Lista de Permissão</TabsTrigger>
-          </TabsList>
-          
-          <div className="space-y-3 mb-4">
-            <div className="grid grid-cols-4 gap-2">
-              <div className="col-span-3">
-                <Input 
-                  placeholder="Digite telefone, IP ou padrão" 
-                  value={value} 
-                  onChange={(e) => setValue(e.target.value)}
-                />
-              </div>
+        <div className="flex flex-col gap-4">
+          <div className="flex flex-col gap-3">
+            <div className="flex gap-2">
+              <Input
+                placeholder="Número ou IP"
+                value={value}
+                onChange={(e) => setValue(e.target.value)}
+                onKeyDown={handleKeyDown}
+                className="flex-1"
+              />
               <Select 
                 value={type} 
-                onValueChange={(value) => setType(value as "phone" | "ip" | "pattern")}
+                onValueChange={(val) => setType(val as any)}
               >
-                <SelectTrigger>
+                <SelectTrigger className="w-[120px]">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
@@ -88,92 +113,51 @@ export function CustomListManager({ entries, onAddEntry, onRemoveEntry, classNam
               </Select>
             </div>
             
-            <Input 
-              placeholder="Notas opcionais" 
-              value={notes} 
-              onChange={(e) => setNotes(e.target.value)}
-            />
-            
-            <Button 
-              onClick={handleAddEntry} 
-              className="w-full bg-shield-500 hover:bg-shield-600"
-            >
-              <PlusCircle className="mr-2 h-4 w-4" />
-              Adicionar à {activeTab === "blocklist" ? "Lista de Bloqueio" : "Lista de Permissão"}
-            </Button>
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <Switch 
+                  checked={isBlocked}
+                  onCheckedChange={setIsBlocked}
+                  id="block-mode"
+                />
+                <Label htmlFor="block-mode" className="text-sm">
+                  {isBlocked ? "Bloquear" : "Permitir"}
+                </Label>
+              </div>
+              
+              <Button 
+                onClick={handleAddEntry}
+                size="sm" 
+                className="gap-1"
+              >
+                <Plus className="h-4 w-4" />
+                Adicionar
+              </Button>
+            </div>
           </div>
           
-          <TabsContent value="blocklist">
-            <div className="text-sm font-medium mb-2">Itens Bloqueados ({blockedEntries.length})</div>
-            <ScrollArea className="h-[180px]">
-              {blockedEntries.length === 0 ? (
-                <p className="text-center text-muted-foreground text-sm py-4">
-                  Sua lista de bloqueio está vazia
-                </p>
-              ) : (
-                <div className="space-y-2">
-                  {blockedEntries.map((entry) => (
-                    <div key={entry.id} className="flex items-center justify-between bg-danger-light/30 rounded p-2 text-sm">
-                      <div>
-                        <div className="font-medium">{entry.value}</div>
-                        <div className="text-xs text-muted-foreground flex items-center gap-1.5">
-                          <span className="bg-muted px-1.5 py-0.5 rounded text-[10px]">
-                            {getTypeLabel(entry.type)}
-                          </span>
-                          {entry.notes && <span>{entry.notes}</span>}
-                        </div>
-                      </div>
-                      <Button 
-                        variant="ghost" 
-                        size="sm" 
-                        className="h-6 w-6 p-0 text-muted-foreground hover:text-foreground" 
-                        onClick={() => onRemoveEntry(entry.id)}
-                      >
-                        <X className="h-4 w-4" />
-                      </Button>
-                    </div>
-                  ))}
-                </div>
-              )}
+          {entries.length > 0 ? (
+            <ScrollArea className="h-[200px] pr-4">
+              <div className="space-y-2">
+                {entries.map((entry) => (
+                  <EntryItem 
+                    key={entry.id} 
+                    entry={entry} 
+                    onRemove={onRemoveEntry} 
+                  />
+                ))}
+              </div>
             </ScrollArea>
-          </TabsContent>
-          
-          <TabsContent value="allowlist">
-            <div className="text-sm font-medium mb-2">Itens Permitidos ({allowedEntries.length})</div>
-            <ScrollArea className="h-[180px]">
-              {allowedEntries.length === 0 ? (
-                <p className="text-center text-muted-foreground text-sm py-4">
-                  Sua lista de permissão está vazia
-                </p>
-              ) : (
-                <div className="space-y-2">
-                  {allowedEntries.map((entry) => (
-                    <div key={entry.id} className="flex items-center justify-between bg-success-light/30 rounded p-2 text-sm">
-                      <div>
-                        <div className="font-medium">{entry.value}</div>
-                        <div className="text-xs text-muted-foreground flex items-center gap-1.5">
-                          <span className="bg-muted px-1.5 py-0.5 rounded text-[10px]">
-                            {getTypeLabel(entry.type)}
-                          </span>
-                          {entry.notes && <span>{entry.notes}</span>}
-                        </div>
-                      </div>
-                      <Button 
-                        variant="ghost" 
-                        size="sm" 
-                        className="h-6 w-6 p-0 text-muted-foreground hover:text-foreground" 
-                        onClick={() => onRemoveEntry(entry.id)}
-                      >
-                        <X className="h-4 w-4" />
-                      </Button>
-                    </div>
-                  ))}
-                </div>
-              )}
-            </ScrollArea>
-          </TabsContent>
-        </Tabs>
+          ) : (
+            <div className="text-center py-8 text-muted-foreground">
+              Nenhuma entrada personalizada adicionada
+            </div>
+          )}
+        </div>
       </CardContent>
     </Card>
   );
 }
+
+// Exportar componente memoizado
+export const CustomListManager = memo(CustomListManagerComponent);

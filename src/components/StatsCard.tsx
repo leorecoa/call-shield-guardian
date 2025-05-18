@@ -1,56 +1,67 @@
-
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { StatsSummary } from "@/types";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui";
+import { SectionImage } from "./SectionImage";
+import { memo } from "react";
 
 interface StatsCardProps {
   stats: StatsSummary;
   className?: string;
 }
 
-export function StatsCard({ stats, className }: StatsCardProps) {
+function StatsCardComponent({ stats, className }: StatsCardProps) {
   return (
     <Card className={className}>
-      <CardHeader className="pb-2">
-        <CardTitle className="text-lg font-semibold text-center">Estatísticas Call Shield</CardTitle>
+      <CardHeader className="pb-2 flex flex-row items-center space-x-2">
+        <SectionImage section="stats" size="sm" />
+        <CardTitle className="text-lg font-semibold text-neonPurple">Estatísticas de Bloqueio</CardTitle>
       </CardHeader>
       <CardContent>
         <div className="grid grid-cols-2 gap-4">
-          <div className="bg-shield-50 p-3 rounded-lg text-center">
-            <p className="text-sm text-muted-foreground">Total Bloqueadas</p>
-            <p className="text-2xl font-bold text-shield-700">{stats.totalBlocked}</p>
-          </div>
-          <div className="bg-shield-50 p-3 rounded-lg text-center">
-            <p className="text-sm text-muted-foreground">Hoje</p>
-            <p className="text-2xl font-bold text-shield-700">{stats.todayBlocked}</p>
-          </div>
-        </div>
-        
-        <div className="mt-4">
-          <h4 className="text-sm font-medium mb-2">Bloqueadas por Tipo</h4>
-          <div className="space-y-2">
-            <div className="flex justify-between items-center">
-              <span className="text-sm">Anônimas</span>
-              <span className="font-medium text-shield-700">{stats.byType.anonymous}</span>
-            </div>
-            <div className="flex justify-between items-center">
-              <span className="text-sm">Servidores Desconhecidos</span>
-              <span className="font-medium text-shield-700">{stats.byType.unknown_server}</span>
-            </div>
-            <div className="flex justify-between items-center">
-              <span className="text-sm">Sem Número Válido</span>
-              <span className="font-medium text-shield-700">{stats.byType.no_valid_number}</span>
-            </div>
-            <div className="flex justify-between items-center">
-              <span className="text-sm">IP Suspeito</span>
-              <span className="font-medium text-shield-700">{stats.byType.suspicious_ip}</span>
-            </div>
-            <div className="flex justify-between items-center">
-              <span className="text-sm">Bloqueadas pelo Usuário</span>
-              <span className="font-medium text-shield-700">{stats.byType.user_blocked}</span>
-            </div>
-          </div>
+          <StatItem 
+            label="Total Bloqueadas" 
+            value={stats.totalBlocked} 
+            className="bg-neonBlue/10"
+          />
+          <StatItem 
+            label="Hoje" 
+            value={stats.todayBlocked} 
+            className="bg-neonPurple/10"
+          />
+          <StatItem 
+            label="Anônimas" 
+            value={stats.byType.anonymous} 
+            className="bg-neonPink/10"
+          />
+          <StatItem 
+            label="Servidores Desconhecidos" 
+            value={stats.byType.unknown_server} 
+            className="bg-neonGreen/10"
+          />
+          <StatItem 
+            label="Números Inválidos" 
+            value={stats.byType.no_valid_number} 
+            className="bg-neonBlue/10"
+          />
+          <StatItem 
+            label="IPs Suspeitos" 
+            value={stats.byType.suspicious_ip} 
+            className="bg-neonPurple/10"
+          />
         </div>
       </CardContent>
     </Card>
   );
 }
+
+// Componente de estatística individual memoizado
+const StatItem = memo(({ label, value, className }: { label: string; value: number; className?: string }) => (
+  <div className={`p-3 rounded-lg ${className}`}>
+    <div className="text-sm font-medium text-muted-foreground">{label}</div>
+    <div className="text-2xl font-bold text-foreground">{value}</div>
+  </div>
+));
+
+StatItem.displayName = "StatItem";
+
+// Exportar componente memoizado
+export const StatsCard = memo(StatsCardComponent);
