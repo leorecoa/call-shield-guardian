@@ -1,0 +1,6 @@
+// THIS FILE IS GENERATED. DO NOT EDIT.
+include ':app'
+include ':capacitor-android'
+include ':capacitor-cordova-android-plugins'
+
+apply from: 'capacitor.settings.gradle'
